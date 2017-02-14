@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Play with C++17</title>
-<link rel="stylesheet" href="base.css" />
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
 <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body><div class="container"><h1 id="play-with-c17">Play with C++17</h1>
 
-<p>Information and Examples to experience C++17.</p>
+<p>Information and Examples to experience C++17. <br>
+[Last update: Feb 14, 2017)</p>
 
 <p><div class="toc">
 <ul>
@@ -50,8 +51,6 @@
 </div>
 </p>
 
-
-
 <h3 id="introduction">Introduction</h3>
 
 <ul>
@@ -67,25 +66,19 @@
 
 
 
-<h3 id="how-to-try-this-stuff-out">How to try this stuff out</h3>
+<h3 id="online-compilers-to-play-with-c17">Online compilers to play with C++17</h3>
 
 <p>GCC and Clang: <a href="http://melpon.org/wandbox">http://melpon.org/wandbox</a></p>
 
 <p>Visual C++: <a href="http://webcompiler.cloudapp.net/">http://webcompiler.cloudapp.net/</a></p>
 
+<h2 id="language">Language</h2>
 
-
-<h3 id="language">Language</h3>
-
-
-
-<h2 id="structured-bindings">Structured bindings</h2>
+<h3 id="structured-bindings">Structured bindings</h3>
 
 <p>Paper: <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0217r2.html">http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0217r2.html</a></p>
 
 <p>Disappointment from the past:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">tuple</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">float</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
 
@@ -138,13 +131,11 @@ tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">
 
 
 
-<h2 id="template-argument-deduction-for-class-templates">Template argument deduction for class templates</h2>
+<h3 id="template-argument-deduction-for-class-templates">Template argument deduction for class templates</h3>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/class_template_deduction">http://en.cppreference.com/w/cpp/language/class_template_deduction</a></p>
 
 <p>Disappointment from the past:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">Func</span><span class="pun">&gt;</span><span class="pln">
 </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">LambdaVisitor</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> </span><span class="typ">SomeVisitor</span><span class="pln"> 
@@ -191,13 +182,11 @@ tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">
 
 
 
-<h2 id="folding-expressions">Folding expressions</h2>
+<h3 id="folding-expressions">Folding expressions</h3>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/fold">http://en.cppreference.com/w/cpp/language/fold</a></p>
 
 <p>Reduce (<em>fold</em>) a parameter pack over a binary operator.</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> </span><span class="typ">Args</span><span class="pun">&gt;</span><span class="pln">
 </span><span class="kwd">auto</span><span class="pln"> sum</span><span class="pun">(</span><span class="typ">Args</span><span class="pun">...</span><span class="pln"> args</span><span class="pun">)</span><span class="pln">
@@ -224,18 +213,14 @@ for_each</span><span class="pun">([](</span><span class="kwd">auto</span><span c
 
 
 
-<h3 id="library-additions">Library Additions</h3>
+<h2 id="library-additions">Library Additions</h2>
 
 <p>C++17 merges many library components that have been in the ecosystem for a long time into the standard. <br>
 The good news is that we already have a long experience with such additions.</p>
 
-
-
-<h2 id="stringview">string_view</h2>
+<h3 id="stringview">string_view</h3>
 
 <p>What’s ugly with the following code?</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">vector</span><span class="str">&lt;string&gt;</span><span class="pln"> split</span><span class="pun">(</span><span class="kwd">const</span><span class="pln"> string</span><span class="pun">&amp;</span><span class="pln"> str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">)</span><span class="pln">
 </span><span class="pun">{</span><span class="pln">
@@ -352,19 +337,15 @@ sv</span><span class="pun">.</span><span class="pln">remove_suffix</span><span c
 
 
 
-<h2 id="associative-containers-additions">associative containers additions</h2>
+<h3 id="associative-containers-additions">associative containers additions</h3>
 
 <p>Note: examples and documentation consider only std::map. The same holds for other associative containers.</p>
 
-
-
-<h3 id="insertorassign">insert_or_assign</h3>
+<h4 id="insertorassign">insert_or_assign</h4>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/container/map/insert_or_assign">http://en.cppreference.com/w/cpp/container/map/insert_or_assign</a></p>
 
 <p>A way to write the classical “insert or update” idiom:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> K</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> V</span><span class="pun">&gt;</span><span class="pln">
 string</span><span class="pun">&amp;</span><span class="pln"> insert_or_assign</span><span class="pun">(</span><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">K</span><span class="pun">,</span><span class="pln"> V</span><span class="pun">&gt;&amp;</span><span class="pln"> m</span><span class="pun">,</span><span class="pln"> K</span><span class="pun">&amp;&amp;</span><span class="pln"> k</span><span class="pun">,</span><span class="pln"> V</span><span class="pun">&amp;&amp;</span><span class="pln"> v</span><span class="pun">)</span><span class="pln"> 
@@ -392,15 +373,13 @@ m</span><span class="pun">.</span><span class="pln">insert_or_assign</span><span
 
 
 
-<h3 id="tryemplace">try_emplace</h3>
+<h4 id="tryemplace">try_emplace</h4>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/container/map/try_emplace">http://en.cppreference.com/w/cpp/container/map/try_emplace</a></p>
 
 <p>More or less like emplace but with two main differences: <br>
 1. if the insertion does not happen, does not move from rvalue arguments (emplace/insert leave that unspecified); <br>
 2. treats the key and the arguments to the mapped_type separately (emplace requires the arguments to construct a pair).</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> unique_ptr</span><span class="str">&lt;int&gt;</span><span class="pun">&gt;</span><span class="pln"> m2</span><span class="pun">;</span><span class="pln">
 m2</span><span class="pun">[</span><span class="str">"A"</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">nullptr</span><span class="pun">;</span><span class="pln">  
@@ -417,15 +396,13 @@ cout </span><span class="pun">&lt;&lt;</span><span class="pln"> m3</span><span c
 
 
 
-<h3 id="extract">extract</h3>
+<h4 id="extract">extract</h4>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/container/map/extract">http://en.cppreference.com/w/cpp/container/map/extract</a></p>
 
 <p>Unlinks a node from an associative container. The node can be found either by position (by passing a <strong>valid</strong> const_iterator) or by key.  <br>
 In either case, no elements are copied or moved, only the internal pointers of the container nodes are repointed (rebalancing may occur, as with erase()). <br>
 extract returns a <strong>node handle</strong> that owns the extracted element, or <em>empty</em> <strong>node handle</strong> in case the element is not found by key.</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> langs </span><span class="pun">{</span><span class="pln"> </span><span class="pun">{</span><span class="str">"apple"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"obj-c"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"ms"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"c#"</span><span class="pun">}</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
 </span><span class="kwd">auto</span><span class="pln"> elemHandle </span><span class="pun">=</span><span class="pln"> langs</span><span class="pun">.</span><span class="pln">extract</span><span class="pun">(</span><span class="str">"microsoft"</span><span class="pun">);</span><span class="pln">
@@ -438,13 +415,11 @@ assert</span><span class="pun">(!</span><span class="pln">elemHandle</span><span
 
 
 
-<h3 id="merge">merge</h3>
+<h4 id="merge">merge</h4>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/container/map/merge">http://en.cppreference.com/w/cpp/container/map/merge</a></p>
 
 <p>Attempts to extract (“splice”) each element in source and insert it into *this using the the comparison object of *this. If there is an element in *this with key equivalent to the key of an element from source, then that element is not extracted from source. No elements are copied or moved, only the internal pointers of the container nodes are repointed. All pointers and references to the transferred elements remain valid, but now refer into *this, not into source.</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> oldContacts </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> 
   </span><span class="pun">{</span><span class="str">"antonio"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"1234"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"franco"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"34412"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"gpad"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"166101010"</span><span class="pun">}</span><span class="pln"> 
@@ -466,13 +441,11 @@ newContacts</span><span class="pun">.</span><span class="pln">merge</span><span 
 
 
 
-<h2 id="optional">optional</h2>
+<h3 id="optional">optional</h3>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/utility/optional">http://en.cppreference.com/w/cpp/utility/optional</a></p>
 
 <p>Manages an optional contained value, i.e. a value that may or may not be present. Any instance of optional at any given point in time either contains a value or does not contain a value.</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">optional</span><span class="pun">&lt;</span><span class="typ">Message</span><span class="pun">&gt;</span><span class="pln"> m </span><span class="pun">=</span><span class="pln"> </span><span class="typ">TryReceive</span><span class="pun">(</span><span class="pln">source</span><span class="pun">);</span><span class="pln">
 </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">m</span><span class="pun">)</span><span class="pln">
@@ -486,13 +459,11 @@ newContacts</span><span class="pun">.</span><span class="pln">merge</span><span 
 
 
 
-<h2 id="any">any</h2>
+<h3 id="any">any</h3>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/experimental/any">http://en.cppreference.com/w/cpp/experimental/any</a></p>
 
 <p>Type-safe container for single values of any type.</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">any a </span><span class="pun">=</span><span class="pln"> </span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">;</span><span class="pln"> </span><span class="com">// contains a string</span><span class="pln">
 </span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> str </span><span class="pun">=</span><span class="pln"> any_cast</span><span class="pun">&lt;</span><span class="kwd">const</span><span class="pln"> string</span><span class="pun">&amp;&gt;(</span><span class="pln">a</span><span class="pun">);</span><span class="pln">
@@ -503,15 +474,13 @@ a </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1
 
 
 
-<h2 id="variant">variant</h2>
+<h3 id="variant">variant</h3>
 
 <p>Represents a type-safe union. An instance of std::variant at any given time either holds a value of one of its alternative types, or it holds no value.</p>
 
 <p>As with unions, if a variant holds a value of some object type T, the object representation of T is allocated directly within the object representation of the variant itself. Variant is not allowed to allocate additional (dynamic) memory. <br>
 A variant is not permitted to hold references, arrays, or the type void. <br>
 As with unions, the default-initialized variant holds a value of its first alternative, unless that alternative is not default-constructible (in which case default constructor won’t compile: the helper class std::monostate can be used to make such variants default-constructible).</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="typ">Visitor</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
   </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="pln">T</span><span class="pun">...)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln"> 
@@ -540,7 +509,7 @@ visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun
 
 
 
-<h3 id="attributes">Attributes</h3>
+<h2 id="attributes">Attributes</h2>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/attributes">http://en.cppreference.com/w/cpp/language/attributes</a></p>
 
@@ -555,8 +524,6 @@ visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun
 <p><strong>[[fallthrough]]</strong></p>
 
 <p>Appears in a switch statement on a line of its own (technically as an attribute of a null statement), immediately before a case label. Indicates that the fall through from the previous case label is intentional and should not be diagnosed by a compiler that warns on fallthrough:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> f</span><span class="pun">(</span><span class="typ">int</span><span class="pln"> n</span><span class="pun">)</span><span class="pln">
 </span><span class="pun">{</span><span class="pln">
@@ -616,18 +583,14 @@ handle </span><span class="typ">LoadModule</span><span class="pun">(</span><span
 
 
 
-<h3 id="generic-programming">Generic Programming</h3>
+<h2 id="generic-programming">Generic Programming</h2>
 
-
-
-<h2 id="apply-invoke">apply &amp; invoke</h2>
+<h3 id="apply-invoke">apply &amp; invoke</h3>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/utility/apply">http://en.cppreference.com/w/cpp/utility/apply</a>  <br>
 and <a href="http://en.cppreference.com/w/cpp/utility/functional/invoke">http://en.cppreference.com/w/cpp/utility/functional/invoke</a></p>
 
 <p>std::apply invokes a callable object by unpacking a tuple into its arguments:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> print</span><span class="pun">(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">);</span><span class="pln">
 
@@ -646,13 +609,11 @@ std</span><span class="pun">::</span><span class="pln">invoke</span><span class=
 
 
 
-<h2 id="makefromtuple">make_from_tuple</h2>
+<h3 id="makefromtuple">make_from_tuple</h3>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/utility/tuple/make_tuple">http://en.cppreference.com/w/cpp/utility/tuple/make_tuple</a></p>
 
 <p>std::make_from_tuple constructs an object of a certain type, using the elements of a tuple as the arguments to the constructor:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> K</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> V</span><span class="pun">&gt;</span><span class="pln">
 </span><span class="kwd">class</span><span class="pln"> </span><span class="typ">MyContainer</span><span class="pln">
@@ -673,14 +634,12 @@ std</span><span class="pun">::</span><span class="pln">invoke</span><span class=
 
 
 
-<h2 id="if-constexpr">if constexpr</h2>
+<h3 id="if-constexpr">if constexpr</h3>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/if#Constexpr_If">http://en.cppreference.com/w/cpp/language/if#Constexpr_If</a></p>
 
 <p>In a <em>constexpr if</em> statement, the value of condition must be a contextually converted constant expression of type bool. If the value is true, then statement-false is discarded (if present), otherwise, statement-true is discarded. <br>
 The return statements in a discarded statement do not participate in function return type deduction.</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">enum</span><span class="pln"> </span><span class="kwd">class</span><span class="pln"> OS </span><span class="pun">{</span><span class="pln"> </span><span class="typ">Linux</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Mac</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Windows</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
 
