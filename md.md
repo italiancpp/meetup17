@@ -3,6 +3,8 @@
 Information and Examples to experience C++17.
 [Last update: Feb 14, 2017)
 
+This document has been written by [Marco Arena](http://marcoarena.wordpress.com) for some [Italian C++ Community](http://italiancpp.org) Meetups.
+
 [toc]
 
 ### Introduction ###
