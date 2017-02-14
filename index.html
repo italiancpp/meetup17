@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Play with C++17</title>
+<link rel="stylesheet" href="base.css" />
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><h1 id="play-with-c17">Play with C++17</h1>
+
+<p>Information and Examples to experience C++17.</p>
+
+<p><div class="toc">
+<ul>
+<li><a href="#play-with-c17">Play with C++17</a><ul>
+<li><ul>
+<li><a href="#introduction">Introduction</a></li>
+<li><a href="#how-to-try-this-stuff-out">How to try this stuff out</a></li>
+<li><a href="#language">Language</a></li>
+</ul>
+</li>
+<li><a href="#structured-bindings">Structured bindings</a></li>
+<li><a href="#template-argument-deduction-for-class-templates">Template argument deduction for class templates</a></li>
+<li><a href="#folding-expressions">Folding expressions</a><ul>
+<li><a href="#library-additions">Library Additions</a></li>
+</ul>
+</li>
+<li><a href="#stringview">string_view</a></li>
+<li><a href="#associative-containers-additions">associative containers additions</a><ul>
+<li><a href="#insertorassign">insert_or_assign</a></li>
+<li><a href="#tryemplace">try_emplace</a></li>
+<li><a href="#extract">extract</a></li>
+<li><a href="#merge">merge</a></li>
+</ul>
+</li>
+<li><a href="#optional">optional</a></li>
+<li><a href="#any">any</a></li>
+<li><a href="#variant">variant</a><ul>
+<li><a href="#attributes">Attributes</a></li>
+<li><a href="#generic-programming">Generic Programming</a></li>
+</ul>
+</li>
+<li><a href="#apply-invoke">apply &amp; invoke</a></li>
+<li><a href="#makefromtuple">make_from_tuple</a></li>
+<li><a href="#if-constexpr">if constexpr</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</p>
+
+
+
+<h3 id="introduction">Introduction</h3>
+
+<ul>
+<li>C++17 has many more “tiny” features than C++11</li>
+<li>Lots of library additions have been used and discussed for years in the industry</li>
+<li>It’s a major release of the language and will act as a springboard for C++20</li>
+<li>Compiler support: <a href="http://en.cppreference.com/w/cpp/compiler_support">http://en.cppreference.com/w/cpp/compiler_support</a></li>
+<li><strong>GCC</strong> is language-complete: <a href="https://gcc.gnu.org/projects/cxx-status.html#cxx11">status</a></li>
+<li><strong>Clang</strong> is ~language-complete: <a href="https://clang.llvm.org/cxx_status.html">status</a></li>
+<li><strong>Visual C++</strong>: <a href="https://docs.microsoft.com/en-us/cpp/cpp-conformance-improvements-2017">news</a></li>
+<li>Another great presentation: <a href="https://jfbastien.github.io/what-is-cpp17/#/8/1">https://jfbastien.github.io/what-is-cpp17/#/8/1</a></li>
+</ul>
+
+
+
+<h3 id="how-to-try-this-stuff-out">How to try this stuff out</h3>
+
+<p>GCC and Clang: <a href="http://melpon.org/wandbox">http://melpon.org/wandbox</a></p>
+
+<p>Visual C++: <a href="http://webcompiler.cloudapp.net/">http://webcompiler.cloudapp.net/</a></p>
+
+
+
+<h3 id="language">Language</h3>
+
+
+
+<h2 id="structured-bindings">Structured bindings</h2>
+
+<p>Paper: <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0217r2.html">http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0217r2.html</a></p>
+
+<p>Disappointment from the past:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">tuple</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">float</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
+
+</span><span class="typ">int</span><span class="pln"> r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">;</span><span class="pln"> </span><span class="typ">float</span><span class="pln"> a</span><span class="pun">;</span><span class="pln">
+tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> a</span><span class="pun">)</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span><span class="pln">
+
+array</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">MakeRGB</span><span class="pun">();</span><span class="pln">
+</span><span class="com">// won't compile</span><span class="pln">
+</span><span class="typ">int</span><span class="pln"> r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">;</span><span class="pln">
+tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">)</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGB</span><span class="pun">();</span><span class="pln">
+
+</span><span class="kwd">struct</span><span class="pln"> </span><span class="typ">RGBa</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+   </span><span class="typ">int</span><span class="pln"> r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">;</span><span class="pln">
+   </span><span class="typ">float</span><span class="pln"> a</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+</span><span class="typ">RGBa</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span><span class="pln">
+
+</span><span class="typ">int</span><span class="pln"> r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">;</span><span class="pln"> </span><span class="typ">float</span><span class="pln"> a</span><span class="pun">;</span><span class="pln">
+</span><span class="com">// won't compile</span><span class="pln">
+tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> a</span><span class="pun">)</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span></code></pre>
+
+<p>Types that are <strong>Destructurable</strong> can benefit of <em>Structured bindings</em>:</p>
+
+<ul>
+<li>Either all non-static data members: <br>
+<ul><li>Must be public</li>
+<li>Must be direct members of the type or members of the same public base class of the type</li>
+<li>Cannot be anonymous unions</li></ul></li>
+<li>Or the type has: <br>
+<ul><li>An obj.get&lt;&gt;() method or an ADL-able get&lt;&gt;(obj) overload</li>
+<li>Specializations of std::tuple_size&lt;&gt; and std::tuple_element&lt;&gt;</li></ul></li>
+</ul>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> a</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span></code></pre>
+
+<p>Let’s use structured bindings to beautifully iterate on a std::map:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">&gt;</span><span class="pln"> nameToAge</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> </span><span class="pun">[</span><span class="pln">name</span><span class="pun">,</span><span class="pln"> age</span><span class="pun">]</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> nameToAge</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+   cout </span><span class="pun">&lt;&lt;</span><span class="pln"> name </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">" has "</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> age </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">" years\n"</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/MlhKfrjJpgs8g5EQ">http://melpon.org/wandbox/permlink/MlhKfrjJpgs8g5EQ</a></p>
+
+
+
+<h2 id="template-argument-deduction-for-class-templates">Template argument deduction for class templates</h2>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/class_template_deduction">http://en.cppreference.com/w/cpp/language/class_template_deduction</a></p>
+
+<p>Disappointment from the past:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">Func</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="kwd">class</span><span class="pln"> </span><span class="typ">LambdaVisitor</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> </span><span class="typ">SomeVisitor</span><span class="pln"> 
+</span><span class="pun">{</span><span class="pln">
+   </span><span class="typ">Func</span><span class="pln"> visitFn</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">public</span><span class="pun">:</span><span class="pln">
+   </span><span class="typ">LambdaVisitor</span><span class="pun">(</span><span class="typ">Func</span><span class="pln"> f</span><span class="pun">)</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> visitFn</span><span class="pun">{</span><span class="pln">f</span><span class="pun">}</span><span class="pln"> </span><span class="pun">{}</span><span class="pln">
+   </span><span class="kwd">void</span><span class="pln"> </span><span class="typ">Visit</span><span class="pun">(</span><span class="kwd">const</span><span class="pln"> </span><span class="typ">Node</span><span class="pun">&amp;</span><span class="pln"> node</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> visitFn</span><span class="pun">(</span><span class="pln">node</span><span class="pun">);</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
+   </span><span class="com">// ...</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+</span><span class="com">// make function to deduce 'Func'</span><span class="pln">
+</span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">Func</span><span class="pun">&gt;</span><span class="pln"> 
+</span><span class="typ">LambdaVisitor</span><span class="pun">&lt;</span><span class="typ">Func</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">MakeLambdaVisitor</span><span class="pun">(</span><span class="typ">Func</span><span class="pln"> f</span><span class="pun">)</span><span class="pln"> 
+</span><span class="pun">{</span><span class="pln">
+   </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span><span class="pln">f</span><span class="pun">};</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="kwd">auto</span><span class="pln"> visitor </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeLambdaVisitor</span><span class="pun">([](</span><span class="kwd">const</span><span class="pln"> </span><span class="typ">Node</span><span class="pun">&amp;</span><span class="pln"> n</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{...});</span></code></pre>
+
+<p>What if LambdaVisitor has “scoped” ownership (e.g. is not copyable nor moveable)?</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="str">&lt;typenameFunc&gt;</span><span class="pln">
+</span><span class="kwd">class</span><span class="pln"> </span><span class="typ">LambdaVisitor</span><span class="pun">:</span><span class="pln"> </span><span class="typ">SomeVisitor</span><span class="pln"> 
+</span><span class="pun">{</span><span class="pln">
+   </span><span class="typ">Funcvisit</span><span class="pln"> </span><span class="typ">Fn</span><span class="pun">;</span><span class="pln"> lock_guard</span><span class="str">&lt;mutex&gt;</span><span class="pln"> l</span><span class="pun">;</span><span class="pln">
+   </span><span class="com">// the rest is the same as before</span></code></pre>
+
+<p>C++17 introduces “Template argument deduction for class templates”:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">class</span><span class="pln"> </span><span class="typ">LambdaVisitor</span><span class="pun">;</span><span class="pln"> </span><span class="com">// same as before</span><span class="pln">
+
+</span><span class="com">// don't need the make-function anymore</span><span class="pln">
+
+</span><span class="typ">LambdaVisitor</span><span class="pln"> visitor</span><span class="pun">{</span><span class="pln"> </span><span class="pun">[](</span><span class="kwd">const</span><span class="pln"> </span><span class="typ">Node</span><span class="pun">&amp;</span><span class="pln"> n</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{...}</span><span class="pln"> </span><span class="pun">};</span></code></pre>
+
+<p>See <a href="http://en.cppreference.com/w/cpp/language/class_template_deduction#User-defined_deduction_guides">here</a> for more details on <strong>custom deduction guides</strong>.</p>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/yeP0bQKndcM8O6vZ">http://melpon.org/wandbox/permlink/yeP0bQKndcM8O6vZ</a></p>
+
+
+
+<h2 id="folding-expressions">Folding expressions</h2>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/fold">http://en.cppreference.com/w/cpp/language/fold</a></p>
+
+<p>Reduce (<em>fold</em>) a parameter pack over a binary operator.</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> </span><span class="typ">Args</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> sum</span><span class="pun">(</span><span class="typ">Args</span><span class="pun">...</span><span class="pln"> args</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">(</span><span class="lit">0</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> args</span><span class="pun">);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> F</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="kwd">void</span><span class="pln"> for_each</span><span class="pun">(</span><span class="pln">F fun</span><span class="pun">,</span><span class="pln"> T</span><span class="pun">&amp;&amp;...</span><span class="pln"> args</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+    </span><span class="pun">(</span><span class="pln">fun </span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">forward</span><span class="pun">&lt;</span><span class="pln">T</span><span class="pun">&gt;(</span><span class="pln">args</span><span class="pun">)),</span><span class="pln"> </span><span class="pun">...);</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+
+cout </span><span class="pun">&lt;&lt;</span><span class="pln"> sum</span><span class="pun">(</span><span class="lit">1</span><span class="pun">,</span><span class="lit">2</span><span class="pun">,</span><span class="lit">3</span><span class="pun">,</span><span class="lit">4</span><span class="pun">)</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> endl</span><span class="pun">;</span><span class="pln">
+
+for_each</span><span class="pun">([](</span><span class="kwd">auto</span><span class="pln"> elem</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    cout </span><span class="pun">&lt;&lt;</span><span class="pln"> elem </span><span class="pun">&lt;&lt;</span><span class="pln"> endl</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">},</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10.0</span><span class="pun">);</span></code></pre>
+
+<p>More on <a href="http://www.italiancpp.org/2015/06/15/folding-expressions">this article by Marco Alesiani</a>.</p>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/9sBbZ3JbW5PtyPDg">http://melpon.org/wandbox/permlink/9sBbZ3JbW5PtyPDg</a></p>
+
+
+
+<h3 id="library-additions">Library Additions</h3>
+
+<p>C++17 merges many library components that have been in the ecosystem for a long time into the standard. <br>
+The good news is that we already have a long experience with such additions.</p>
+
+
+
+<h2 id="stringview">string_view</h2>
+
+<p>What’s ugly with the following code?</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">vector</span><span class="str">&lt;string&gt;</span><span class="pln"> split</span><span class="pun">(</span><span class="kwd">const</span><span class="pln"> string</span><span class="pun">&amp;</span><span class="pln"> str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="typ">vector</span><span class="str">&lt;string&gt;</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
+
+  string</span><span class="pun">::</span><span class="pln">size_type start </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+  </span><span class="kwd">auto</span><span class="pln"> pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
+  </span><span class="kwd">while</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> string</span><span class="pun">::</span><span class="pln">npos</span><span class="pun">)</span><span class="pln">
+  </span><span class="pun">{</span><span class="pln">
+     </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> start</span><span class="pun">)</span><span class="pln">
+     </span><span class="pun">{</span><span class="pln">
+        ret</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> pos </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
+     </span><span class="pun">}</span><span class="pln">
+     start </span><span class="pun">=</span><span class="pln"> pos </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">;</span><span class="pln">
+     pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">start </span><span class="pun">&lt;</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">())</span><span class="pln">
+  ret</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">()</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
+  </span><span class="kwd">return</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>Basically, I don’t want to reallocate strings that are already part of the string that I’m splitting. <br>
+Can I use offsets?</p>
+
+<p>I can do better: I can use string_views:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">vector</span><span class="str">&lt;string_view&gt;</span><span class="pln"> split</span><span class="pun">(</span><span class="pln">string_view str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+   </span><span class="typ">vector</span><span class="str">&lt;string_view&gt;</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
+
+   string_view</span><span class="pun">::</span><span class="pln">size_type start </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+   </span><span class="kwd">auto</span><span class="pln"> pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
+   </span><span class="kwd">while</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> string_view</span><span class="pun">::</span><span class="pln">npos</span><span class="pun">)</span><span class="pln">
+   </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> start</span><span class="pun">)</span><span class="pln">
+      </span><span class="pun">{</span><span class="pln">
+         ret</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> pos </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln">
+      start </span><span class="pun">=</span><span class="pln"> pos </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">;</span><span class="pln">
+      pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
+   </span><span class="pun">}</span><span class="pln">
+   </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">start </span><span class="pun">&lt;</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">())</span><span class="pln">
+      ret</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">()</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
+   </span><span class="kwd">return</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>Or, more generic:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">Action</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="kwd">void</span><span class="pln"> on_each_token</span><span class="pun">(</span><span class="pln">string_view str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Action</span><span class="pln"> action</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+   string_view</span><span class="pun">::</span><span class="pln">size_type start </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+   </span><span class="kwd">auto</span><span class="pln"> pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
+   </span><span class="kwd">while</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> string_view</span><span class="pun">::</span><span class="pln">npos</span><span class="pun">)</span><span class="pln">
+   </span><span class="pun">{</span><span class="pln">
+      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> start</span><span class="pun">)</span><span class="pln">
+      </span><span class="pun">{</span><span class="pln">
+         action</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> pos </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
+      </span><span class="pun">}</span><span class="pln">
+      start </span><span class="pun">=</span><span class="pln"> pos </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">;</span><span class="pln">
+      pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
+   </span><span class="pun">}</span><span class="pln">
+   </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">start </span><span class="pun">&lt;</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">())</span><span class="pln">
+      action</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">()</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>string_view is an object that can refer to a constant contiguous sequence of char-like objects with the first element of the sequence at position zero. <br>
+I repeat: string_view is a reference. This means: it does not participate in the ownership of the sequence.</p>
+
+<p>Typical implementations:</p>
+
+<ul>
+<li>const char pointer and a size;</li>
+<li>couple of pointers;</li>
+</ul>
+
+<p>You can imagine string_view as a smart const char* which provides any const member function of std::string as well as a few handy utilities to reduce its span. You cannot enlarge a string_view until you reassign it.</p>
+
+<p>First of all, string_view is an <strong>adapter</strong>: different string types cam be adapted into a std::string-like container through string_view:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">CString</span><span class="pln"> cstr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">...</span><span class="pln">
+string_view cstrv </span><span class="pun">{</span><span class="pln">cstr</span><span class="pun">.</span><span class="typ">GetString</span><span class="pun">()};</span><span class="pln">
+
+string stdstr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">...</span><span class="pln">
+string_view stdstrv </span><span class="pun">{</span><span class="pln">stdstr</span><span class="pun">};</span><span class="pln">
+
+</span><span class="typ">QString</span><span class="pln"> qstr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">...</span><span class="pln">
+string_view qstrv </span><span class="pun">{</span><span class="pln">qstr</span><span class="pun">.</span><span class="pln">toLatin1</span><span class="pun">().</span><span class="pln">constData</span><span class="pun">()};</span><span class="pln">
+
+</span><span class="com">// only one implementation</span><span class="pln">
+</span><span class="typ">ReturnType</span><span class="pln"> readonly_on_string_function</span><span class="pun">(</span><span class="pln">string_view sv</span><span class="pun">);</span><span class="pln"> </span><span class="com">// only one implementation</span></code></pre>
+
+<p>Whenever you can do operations that are just the matter of “moving an offset” on the original string, string_view is your best friend:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">string_view sv </span><span class="pun">=</span><span class="pln"> name</span><span class="pun">.</span><span class="typ">GetString</span><span class="pun">();</span><span class="pln"> </span><span class="com">// GetString() returns a null-terminated const char*</span><span class="pln">
+sv</span><span class="pun">.</span><span class="pln">remove_prefix</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">min</span><span class="pun">(</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">find_first_not_of</span><span class="pun">(</span><span class="str">" "</span><span class="pun">),</span><span class="pln"> sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()));</span><span class="pln"> 
+sv</span><span class="pun">.</span><span class="pln">remove_suffix</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">min</span><span class="pun">(</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()-</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">find_last_not_of</span><span class="pun">(</span><span class="str">" "</span><span class="pun">)-</span><span class="lit">1</span><span class="pun">,</span><span class="pln"> sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()));</span><span class="pln"> </span></code></pre>
+
+<p>What’s that?</p>
+
+<p>Yes, <strong>trim</strong>. Without creating a new string instance.</p>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/uITUQzX4ytMIG7n6">http://melpon.org/wandbox/permlink/uITUQzX4ytMIG7n6</a></p>
+
+<p>Some string_view pitfalls: <a href="https://marcoarena.wordpress.com/2017/01/03/string_view-odi-et-amo/">https://marcoarena.wordpress.com/2017/01/03/string_view-odi-et-amo/</a></p>
+
+
+
+<h2 id="associative-containers-additions">associative containers additions</h2>
+
+<p>Note: examples and documentation consider only std::map. The same holds for other associative containers.</p>
+
+
+
+<h3 id="insertorassign">insert_or_assign</h3>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/container/map/insert_or_assign">http://en.cppreference.com/w/cpp/container/map/insert_or_assign</a></p>
+
+<p>A way to write the classical “insert or update” idiom:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> K</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> V</span><span class="pun">&gt;</span><span class="pln">
+string</span><span class="pun">&amp;</span><span class="pln"> insert_or_assign</span><span class="pun">(</span><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">K</span><span class="pun">,</span><span class="pln"> V</span><span class="pun">&gt;&amp;</span><span class="pln"> m</span><span class="pun">,</span><span class="pln"> K</span><span class="pun">&amp;&amp;</span><span class="pln"> k</span><span class="pun">,</span><span class="pln"> V</span><span class="pun">&amp;&amp;</span><span class="pln"> v</span><span class="pun">)</span><span class="pln"> 
+</span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">auto</span><span class="pln"> p </span><span class="pun">=</span><span class="pln"> m</span><span class="pun">.</span><span class="pln">equal_range</span><span class="pun">(</span><span class="pln">k</span><span class="pun">);</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">p</span><span class="pun">.</span><span class="pln">first </span><span class="pun">!=</span><span class="pln"> p</span><span class="pun">.</span><span class="pln">second</span><span class="pun">)</span><span class="pln">
+        </span><span class="kwd">return</span><span class="pln"> p</span><span class="pun">.</span><span class="pln">first</span><span class="pun">-&gt;</span><span class="pln">second </span><span class="pun">=</span><span class="pln"> forward</span><span class="pun">&lt;</span><span class="pln">V</span><span class="pun">&gt;(</span><span class="pln">v</span><span class="pun">);</span><span class="pln">
+    </span><span class="kwd">return</span><span class="pln"> m</span><span class="pun">.</span><span class="pln">emplace_hint</span><span class="pun">(</span><span class="pln">p</span><span class="pun">.</span><span class="pln">first</span><span class="pun">,</span><span class="pln"> k</span><span class="pun">,</span><span class="pln"> forward</span><span class="pun">&lt;</span><span class="pln">V</span><span class="pun">&gt;(</span><span class="pln">v</span><span class="pun">))-&gt;</span><span class="pln">second</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="typ">map</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> m</span><span class="pun">;</span><span class="pln">
+insert_or_assign</span><span class="pun">(</span><span class="pln">m</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello world C++17!"</span><span class="pln">s</span><span class="pun">);</span><span class="pln">
+insert_or_assign</span><span class="pun">(</span><span class="pln">m</span><span class="pun">,</span><span class="pln"> </span><span class="lit">20</span><span class="pun">,</span><span class="pln"> </span><span class="str">"associative containers 2.0"</span><span class="pln">s</span><span class="pun">);</span></code></pre>
+
+<p>Finally, C++17 makes makes this part of the container’s interface:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">m</span><span class="pun">.</span><span class="pln">insert_or_assign</span><span class="pun">(</span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello world C++17!"</span><span class="pln">s</span><span class="pun">);</span><span class="pln">
+m</span><span class="pun">.</span><span class="pln">insert_or_assign</span><span class="pun">(</span><span class="lit">20</span><span class="pun">,</span><span class="pln"> </span><span class="str">"associative containers 2.0"</span><span class="pln">s</span><span class="pun">);</span></code></pre>
+
+<p>Why this is even better than any hand-made “insert or update”: <br>
+* implementers may take advantage or internal details of the container; <br>
+* unordered containers finally computes hash only once (they ignore hints).</p>
+
+
+
+<h3 id="tryemplace">try_emplace</h3>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/container/map/try_emplace">http://en.cppreference.com/w/cpp/container/map/try_emplace</a></p>
+
+<p>More or less like emplace but with two main differences: <br>
+1. if the insertion does not happen, does not move from rvalue arguments (emplace/insert leave that unspecified); <br>
+2. treats the key and the arguments to the mapped_type separately (emplace requires the arguments to construct a pair).</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> unique_ptr</span><span class="str">&lt;int&gt;</span><span class="pun">&gt;</span><span class="pln"> m2</span><span class="pun">;</span><span class="pln">
+m2</span><span class="pun">[</span><span class="str">"A"</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">nullptr</span><span class="pun">;</span><span class="pln">  
+ptr </span><span class="pun">=</span><span class="pln"> make_unique</span><span class="str">&lt;int&gt;</span><span class="pun">(</span><span class="lit">23</span><span class="pun">);</span><span class="pln">
+m2</span><span class="pun">.</span><span class="pln">try_emplace</span><span class="pun">(</span><span class="str">"A"</span><span class="pun">,</span><span class="pln"> move</span><span class="pun">(</span><span class="pln">ptr</span><span class="pun">));</span><span class="pln">
+assert</span><span class="pun">(</span><span class="pln">ptr</span><span class="pun">);</span><span class="pln"> </span><span class="com">// will never fire (1)</span><span class="pln">
+
+</span><span class="com">// spot the differences (2):</span><span class="pln">
+</span><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> m3</span><span class="pun">;</span><span class="pln">
+m3</span><span class="pun">.</span><span class="pln">emplace</span><span class="pun">(</span><span class="pln">piecewise_construct</span><span class="pun">,</span><span class="pln"> forward_as_tuple</span><span class="pun">(</span><span class="str">"pippo"</span><span class="pun">),</span><span class="pln"> forward_as_tuple</span><span class="pun">(</span><span class="lit">5</span><span class="pun">,</span><span class="pln"> </span><span class="str">'A'</span><span class="pun">));</span><span class="pln">
+cout </span><span class="pun">&lt;&lt;</span><span class="pln"> m3</span><span class="pun">[</span><span class="str">"pippo"</span><span class="pun">]</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"\n"</span><span class="pun">;</span><span class="pln">
+m3</span><span class="pun">.</span><span class="pln">try_emplace</span><span class="pun">(</span><span class="str">"pluto"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">5</span><span class="pun">,</span><span class="pln"> </span><span class="str">'A'</span><span class="pun">);</span><span class="pln"> </span><span class="com">// cute</span><span class="pln">
+cout </span><span class="pun">&lt;&lt;</span><span class="pln"> m3</span><span class="pun">[</span><span class="str">"pluto"</span><span class="pun">]</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"\n\n"</span><span class="pun">;</span></code></pre>
+
+
+
+<h3 id="extract">extract</h3>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/container/map/extract">http://en.cppreference.com/w/cpp/container/map/extract</a></p>
+
+<p>Unlinks a node from an associative container. The node can be found either by position (by passing a <strong>valid</strong> const_iterator) or by key.  <br>
+In either case, no elements are copied or moved, only the internal pointers of the container nodes are repointed (rebalancing may occur, as with erase()). <br>
+extract returns a <strong>node handle</strong> that owns the extracted element, or <em>empty</em> <strong>node handle</strong> in case the element is not found by key.</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> langs </span><span class="pun">{</span><span class="pln"> </span><span class="pun">{</span><span class="str">"apple"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"obj-c"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"ms"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"c#"</span><span class="pun">}</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> elemHandle </span><span class="pun">=</span><span class="pln"> langs</span><span class="pun">.</span><span class="pln">extract</span><span class="pun">(</span><span class="str">"microsoft"</span><span class="pun">);</span><span class="pln">
+assert</span><span class="pun">(</span><span class="pln">langs</span><span class="pun">.</span><span class="pln">count</span><span class="pun">(</span><span class="str">"microsoft"</span><span class="pun">)</span><span class="pln"> </span><span class="pun">==</span><span class="pln"> </span><span class="lit">0</span><span class="pun">);</span><span class="pln"> </span><span class="com">// the node has been physically extracted from the map</span><span class="pln">
+elemHandle</span><span class="pun">.</span><span class="pln">key</span><span class="pun">()</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="str">"Microsoft"</span><span class="pun">;</span><span class="pln">
+langs</span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">move</span><span class="pun">(</span><span class="pln">elemHandle</span><span class="pun">));</span><span class="pln"> </span><span class="com">// move it back</span><span class="pln">
+assert</span><span class="pun">(!</span><span class="pln">elemHandle</span><span class="pun">);</span><span class="pln"> </span><span class="com">// the handle is not valid anymore</span></code></pre>
+
+<p>extract is the only way to change a key of a map element without reallocation:</p>
+
+
+
+<h3 id="merge">merge</h3>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/container/map/merge">http://en.cppreference.com/w/cpp/container/map/merge</a></p>
+
+<p>Attempts to extract (“splice”) each element in source and insert it into *this using the the comparison object of *this. If there is an element in *this with key equivalent to the key of an element from source, then that element is not extracted from source. No elements are copied or moved, only the internal pointers of the container nodes are repointed. All pointers and references to the transferred elements remain valid, but now refer into *this, not into source.</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> oldContacts </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> 
+  </span><span class="pun">{</span><span class="str">"antonio"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"1234"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"franco"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"34412"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"gpad"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"166101010"</span><span class="pun">}</span><span class="pln"> 
+</span><span class="pun">};</span><span class="pln">
+</span><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> newContacts </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> 
+  </span><span class="pun">{</span><span class="str">"marco"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"23123"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"gpad"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"8991234"</span><span class="pun">}</span><span class="pln"> 
+</span><span class="pun">};</span><span class="pln">
+
+</span><span class="com">// nodes are physically extracted from OldContacts, duplicates are skipped</span><span class="pln">
+newContacts</span><span class="pun">.</span><span class="pln">merge</span><span class="pun">(</span><span class="pln">oldContacts</span><span class="pun">);</span><span class="pln"> 
+</span><span class="com">/* newContacts = 
+  {"antonio", "1234"}, 
+  {"franco", "34412"}, 
+  {"gpad", "8991234"}, 
+  {"marco", "23123"} 
+*/</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/hWeMmkSDUd4bNHk3">http://melpon.org/wandbox/permlink/hWeMmkSDUd4bNHk3</a></p>
+
+
+
+<h2 id="optional">optional</h2>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/utility/optional">http://en.cppreference.com/w/cpp/utility/optional</a></p>
+
+<p>Manages an optional contained value, i.e. a value that may or may not be present. Any instance of optional at any given point in time either contains a value or does not contain a value.</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">optional</span><span class="pun">&lt;</span><span class="typ">Message</span><span class="pun">&gt;</span><span class="pln"> m </span><span class="pun">=</span><span class="pln"> </span><span class="typ">TryReceive</span><span class="pun">(</span><span class="pln">source</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">m</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+ </span><span class="com">// use *m or m.value()</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>optional works nicely with <strong>chaining</strong>.</p>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/Ky3M1j2BJe5sCLc3">http://melpon.org/wandbox/permlink/Ky3M1j2BJe5sCLc3</a></p>
+
+
+
+<h2 id="any">any</h2>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/experimental/any">http://en.cppreference.com/w/cpp/experimental/any</a></p>
+
+<p>Type-safe container for single values of any type.</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">any a </span><span class="pun">=</span><span class="pln"> </span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">;</span><span class="pln"> </span><span class="com">// contains a string</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> str </span><span class="pun">=</span><span class="pln"> any_cast</span><span class="pun">&lt;</span><span class="kwd">const</span><span class="pln"> string</span><span class="pun">&amp;&gt;(</span><span class="pln">a</span><span class="pun">);</span><span class="pln">
+a </span><span class="pun">=</span><span class="pln"> </span><span class="lit">10</span><span class="pun">;</span><span class="pln"> </span><span class="com">// contains int</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> any_cast</span><span class="str">&lt;int&gt;</span><span class="pun">(</span><span class="pln">a</span><span class="pun">);</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/3DMMCjwpagDf3W00">http://melpon.org/wandbox/permlink/3DMMCjwpagDf3W00</a></p>
+
+
+
+<h2 id="variant">variant</h2>
+
+<p>Represents a type-safe union. An instance of std::variant at any given time either holds a value of one of its alternative types, or it holds no value.</p>
+
+<p>As with unions, if a variant holds a value of some object type T, the object representation of T is allocated directly within the object representation of the variant itself. Variant is not allowed to allocate additional (dynamic) memory. <br>
+A variant is not permitted to hold references, arrays, or the type void. <br>
+As with unions, the default-initialized variant holds a value of its first alternative, unless that alternative is not default-constructible (in which case default constructor won’t compile: the helper class std::monostate can be used to make such variants default-constructible).</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="typ">Visitor</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="pln">T</span><span class="pun">...)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln"> 
+  </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="typ">int</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln">
+  </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">double</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln"> 
+  </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> T</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+variant</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln">string</span><span class="pun">,</span><span class="kwd">double</span><span class="pun">&gt;</span><span class="pln"> i</span><span class="pun">{</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="pun">},</span><span class="pln"> str</span><span class="pun">{</span><span class="pln"> </span><span class="str">"hi"</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+</span><span class="com">// valid (or nullptr) - noexcept</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> intPtr </span><span class="pun">=</span><span class="pln"> get_if</span><span class="str">&lt;int&gt;</span><span class="pun">(</span><span class="pln">i</span><span class="pun">);</span><span class="pln"> 
+</span><span class="kwd">auto</span><span class="pln"> nullPtr </span><span class="pun">=</span><span class="pln"> get_if</span><span class="str">&lt;double&gt;</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);</span><span class="pln"> 
+</span><span class="com">// valid (or throws std::bad_variant_access)</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> strRef </span><span class="pun">=</span><span class="pln"> get</span><span class="str">&lt;string&gt;</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);</span><span class="pln">
+
+</span><span class="typ">Visitor</span><span class="pln"> v</span><span class="pun">;</span><span class="pln">
+visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun">,</span><span class="pln"> i</span><span class="pun">);</span><span class="pln"> </span><span class="com">// on int</span><span class="pln">
+visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">);</span><span class="pln"> </span><span class="com">// on T</span><span class="pln">
+
+</span><span class="com">// multi-visitation</span><span class="pln">
+visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun">,</span><span class="pln"> i</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">);</span><span class="pln"> </span><span class="com">// on T, T</span><span class="pln">
+visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">,</span><span class="pln"> i</span><span class="pun">);</span><span class="pln"> </span><span class="com">// on string, T</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/sGMv2G23hzMjVK3S">http://melpon.org/wandbox/permlink/sGMv2G23hzMjVK3S</a></p>
+
+
+
+<h3 id="attributes">Attributes</h3>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/attributes">http://en.cppreference.com/w/cpp/language/attributes</a></p>
+
+<p>Attributes provide the unified standard syntax for implementation-defined language extensions. An attribute can be used almost everywhere in the C++ program, and can be applied to almost everything: to types, to variables, to functions, to names, to code blocks, to entire translation units, although each particular attribute is only valid where it is permitted by the implementation.</p>
+
+<p>Besides the standard attributes listed below, implementations may support arbitrary non-standard attributes with implementation-defined behavior. That’s possibile thanks to C++17 that introduces the following rule: “attributes unknown to an implementation are ignored without causing an error”.</p>
+
+<p>Modern library like the <a href="https://github.com/Microsoft/GSL">GSL</a> already started using custom attributes, like [[gsl::suppress]].</p>
+
+<p>New C++17 standard attributes:</p>
+
+<p><strong>[[fallthrough]]</strong></p>
+
+<p>Appears in a switch statement on a line of its own (technically as an attribute of a null statement), immediately before a case label. Indicates that the fall through from the previous case label is intentional and should not be diagnosed by a compiler that warns on fallthrough:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> f</span><span class="pun">(</span><span class="typ">int</span><span class="pln"> n</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">switch</span><span class="pln"> </span><span class="pun">(</span><span class="pln">n</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">case</span><span class="pln"> </span><span class="lit">1</span><span class="pun">:</span><span class="pln">
+    </span><span class="kwd">case</span><span class="pln"> </span><span class="lit">2</span><span class="pun">:</span><span class="pln">
+      cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"case 1\n"</span><span class="pun">;</span><span class="pln">
+      </span><span class="pun">[[</span><span class="pln">fallthrough</span><span class="pun">]];</span><span class="pln">
+    </span><span class="kwd">case</span><span class="pln"> </span><span class="lit">3</span><span class="pun">:</span><span class="pln"> </span><span class="com">// no warning on fallthrough</span><span class="pln">
+      cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"case 2\n"</span><span class="pun">;</span><span class="pln">
+      </span><span class="com">//[[fallthrough]]; // decomment to silent the warning</span><span class="pln">
+    </span><span class="kwd">case</span><span class="pln"> </span><span class="lit">4</span><span class="pun">:</span><span class="pln"> </span><span class="com">// compiler may warn on fallthrough</span><span class="pln">
+      cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"case 4\n"</span><span class="pun">;</span><span class="pln">
+      </span><span class="com">// [[fallthrough]]; // ill formed, not before a case label</span><span class="pln">
+  </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p><strong>[[nodiscard]]</strong></p>
+
+<p>Appears in a function declaration, enumeration declaration, or class declaration. If a function declared nodiscard or a function returning an enumeration or class declared nodiscard by value is called from a discarded-value expression other than a cast to void, the compiler is encouraged to issue a warning:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="pun">[[</span><span class="pln">nodiscard</span><span class="pun">]]</span><span class="pln"> handle </span><span class="pun">{</span><span class="pln"> </span><span class="typ">int</span><span class="pln"> secret</span><span class="pun">;</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+handle </span><span class="typ">LoadModule</span><span class="pun">(</span><span class="pln">string_view name</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">name </span><span class="pun">==</span><span class="pln"> </span><span class="str">"module1"</span><span class="pun">)</span><span class="pln">
+        </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span><span class="lit">10</span><span class="pun">};</span><span class="pln"> 
+    </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{};</span><span class="pln"> </span><span class="com">// suppose invalid</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="pun">[[</span><span class="pln">nodiscard</span><span class="pun">]]</span><span class="pln"> </span><span class="typ">int</span><span class="pln"> </span><span class="typ">LastErrorCode</span><span class="pun">()</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">return</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="typ">LoadModule</span><span class="pun">(</span><span class="str">"module"</span><span class="pun">);</span><span class="pln"> </span><span class="com">// warning encouraged</span><span class="pln">
+
+</span><span class="typ">LastErrorCode</span><span class="pun">();</span><span class="pln"> </span><span class="com">// warning encouraged</span></code></pre>
+
+<p><strong>[[maybe_unused]]</strong></p>
+
+<p>Appears in the declaration of a class, a typedef­, a variable, a non­static data member, a function, an enumeration, or an enumerator. If the compiler issues warnings on unused entities, that warning is suppressed for any entity declared maybe_unused:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="com">// v--- the function may be unused</span><span class="pln">
+ </span><span class="pun">[[</span><span class="pln">maybe_unused</span><span class="pun">]]</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> unused</span><span class="pun">([[</span><span class="pln">maybe_unused</span><span class="pun">]]</span><span class="pln"> </span><span class="kwd">bool</span><span class="pln"> thing1</span><span class="pun">,</span><span class="pln"> </span><span class="pun">[[</span><span class="pln">maybe_unused</span><span class="pun">]]</span><span class="pln"> </span><span class="kwd">bool</span><span class="pln"> thing2</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+   </span><span class="pun">[[</span><span class="pln">maybe_unused</span><span class="pun">]]</span><span class="pln"> </span><span class="kwd">bool</span><span class="pln"> b </span><span class="pun">=</span><span class="pln"> thing1 </span><span class="pun">&amp;&amp;</span><span class="pln"> thing2</span><span class="pun">;</span><span class="pln">
+   assert</span><span class="pun">(</span><span class="pln">b</span><span class="pun">);</span><span class="pln"> </span><span class="com">// in release mode, assert is compiled out, and b is unused</span><span class="pln">
+              </span><span class="com">// no warning because it is declared [[maybe_unused]]</span><span class="pln">
+</span><span class="pun">}</span><span class="pln"> </span><span class="com">// parameters thing1 and thing2 are not used, no warning</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/sIo3MzPDlUxm1OjX">http://melpon.org/wandbox/permlink/sIo3MzPDlUxm1OjX</a></p>
+
+
+
+<h3 id="generic-programming">Generic Programming</h3>
+
+
+
+<h2 id="apply-invoke">apply &amp; invoke</h2>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/utility/apply">http://en.cppreference.com/w/cpp/utility/apply</a>  <br>
+and <a href="http://en.cppreference.com/w/cpp/utility/functional/invoke">http://en.cppreference.com/w/cpp/utility/functional/invoke</a></p>
+
+<p>std::apply invokes a callable object by unpacking a tuple into its arguments:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> print</span><span class="pun">(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">);</span><span class="pln">
+
+tuple args</span><span class="pun">{</span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">{}};</span><span class="pln">
+std</span><span class="pun">::</span><span class="pln">apply</span><span class="pun">(</span><span class="pln">print</span><span class="pun">,</span><span class="pln"> args</span><span class="pun">);</span></code></pre>
+
+<p>std::invoke is the “unzipped” version of std::apply: it invokes the callable object with the parameters passed:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> print</span><span class="pun">(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">);</span><span class="pln">
+
+std</span><span class="pun">::</span><span class="pln">invoke</span><span class="pun">(</span><span class="pln">print</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">{});</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ#wandbox-resultwindow-code-body-24">http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ#wandbox-resultwindow-code-body-24</a></p>
+
+
+
+<h2 id="makefromtuple">make_from_tuple</h2>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/utility/tuple/make_tuple">http://en.cppreference.com/w/cpp/utility/tuple/make_tuple</a></p>
+
+<p>std::make_from_tuple constructs an object of a certain type, using the elements of a tuple as the arguments to the constructor:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> K</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> V</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="kwd">class</span><span class="pln"> </span><span class="typ">MyContainer</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+   </span><span class="typ">vector</span><span class="pun">&lt;</span><span class="pln">K</span><span class="pun">&gt;</span><span class="pln"> keys</span><span class="pun">;</span><span class="pln">
+   </span><span class="typ">vector</span><span class="pun">&lt;</span><span class="pln">V</span><span class="pun">&gt;</span><span class="pln"> values</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">public</span><span class="pun">:</span><span class="pln">
+   </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">KeyTuple</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">ValueTuple</span><span class="pun">&gt;</span><span class="pln">
+   </span><span class="kwd">void</span><span class="pln"> emplace</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="typ">piecewise_construct_t</span><span class="pun">,</span><span class="pln"> </span><span class="typ">KeyTuple</span><span class="pun">&amp;&amp;</span><span class="pln"> kt</span><span class="pun">,</span><span class="pln"> </span><span class="typ">ValueTuple</span><span class="pun">&amp;&amp;</span><span class="pln"> vt</span><span class="pun">)</span><span class="pln">
+   </span><span class="pun">{</span><span class="pln">
+     </span><span class="com">// ... some complex logic</span><span class="pln">
+     keys</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">make_from_tuple</span><span class="pun">&lt;</span><span class="pln">K</span><span class="pun">&gt;(</span><span class="pln">kt</span><span class="pun">));</span><span class="pln">
+     values</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">make_from_tuple</span><span class="pun">&lt;</span><span class="pln">V</span><span class="pun">&gt;(</span><span class="pln">vt</span><span class="pun">));</span><span class="pln">
+   </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">};</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o#wandbox-resultwindow-code-body-17">http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o#wandbox-resultwindow-code-body-17</a></p>
+
+
+
+<h2 id="if-constexpr">if constexpr</h2>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/if#Constexpr_If">http://en.cppreference.com/w/cpp/language/if#Constexpr_If</a></p>
+
+<p>In a <em>constexpr if</em> statement, the value of condition must be a contextually converted constant expression of type bool. If the value is true, then statement-false is discarded (if present), otherwise, statement-true is discarded. <br>
+The return statements in a discarded statement do not participate in function return type deduction.</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">enum</span><span class="pln"> </span><span class="kwd">class</span><span class="pln"> OS </span><span class="pun">{</span><span class="pln"> </span><span class="typ">Linux</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Mac</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Windows</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+
+</span><span class="com">#ifdef</span><span class="pln"> __linux__
+  </span><span class="kwd">constexpr</span><span class="pln"> OS curr_os </span><span class="pun">=</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Linux</span><span class="pun">;</span><span class="pln">
+</span><span class="com">#elif</span><span class="pln"> __APPLE__
+  </span><span class="kwd">constexpr</span><span class="pln"> OS curr_os </span><span class="pun">=</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Mac</span><span class="pun">;</span><span class="pln">
+</span><span class="com">#elif</span><span class="pln"> __WIN32
+  </span><span class="kwd">constexpr</span><span class="pln"> OS curr_os </span><span class="pun">=</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Windows</span><span class="pun">;</span><span class="pln">
+</span><span class="com">#endif</span><span class="pln">
+
+</span><span class="kwd">void</span><span class="pln"> do_something</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+     </span><span class="com">//do something general</span><span class="pln">
+
+     </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">constexpr</span><span class="pln"> </span><span class="pun">(</span><span class="pln">curr_os </span><span class="pun">==</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Linux</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+         </span><span class="com">//do something Linuxy</span><span class="pln">
+     </span><span class="pun">}</span><span class="pln">
+     </span><span class="kwd">else</span><span class="pln"> </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">constexpr</span><span class="pln"> </span><span class="pun">(</span><span class="pln">curr_os </span><span class="pun">==</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Mac</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+         </span><span class="com">//do something Appley</span><span class="pln">
+     </span><span class="pun">}</span><span class="pln">
+     </span><span class="kwd">else</span><span class="pln"> </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">constexpr</span><span class="pln"> </span><span class="pun">(</span><span class="pln">curr_os </span><span class="pun">==</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Windows</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
+         </span><span class="com">//do something Windowsy</span><span class="pln">
+     </span><span class="pun">}</span><span class="pln">
+
+     </span><span class="com">//do something general</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/g1bceK9eVAMgWvBq">http://melpon.org/wandbox/permlink/g1bceK9eVAMgWvBq</a></p></div></body>
+</html>
