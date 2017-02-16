@@ -17,6 +17,7 @@ This document has been written by [Marco Arena](http://marcoarena.wordpress.com)
 * **Clang** is ~language-complete: [status](https://clang.llvm.org/cxx_status.html)
 * **Visual C++**: [news](https://docs.microsoft.com/en-us/cpp/cpp-conformance-improvements-2017)
 * Another great presentation: https://jfbastien.github.io/what-is-cpp17/#/8/1
+* Another great cheatsheet: https://github.com/AnthonyCalandra/modern-cpp-features#structured-bindings
 
 ### Online compilers to play with C++17 ###
 
