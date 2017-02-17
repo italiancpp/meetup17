@@ -9,8 +9,9 @@
 </head>
 <body><div class="container"><h1 id="play-with-c17">Play with C++17</h1>
 
-<p>Information and Examples to experience C++17. <br>
-[Last update: Feb 14, 2017)</p>
+<p>Information and Examples to experience C++17.</p>
+
+<p>[Last update: Feb 17, 2017)</p>
 
 <p>This document has been written by <a href="http://marcoarena.wordpress.com">Marco Arena</a> for some <a href="http://italiancpp.org">Italian C++ Community</a> Meetups.</p>
 
@@ -25,6 +26,7 @@
 <li><a href="#language">Language</a><ul>
 <li><a href="#structured-bindings">Structured bindings</a></li>
 <li><a href="#template-argument-deduction-for-class-templates">Template argument deduction for class templates</a></li>
+<li><a href="#ifswitch-statements-with-initializers">if/switch statements with initializers</a></li>
 <li><a href="#folding-expressions">Folding expressions</a></li>
 </ul>
 </li>
@@ -55,8 +57,6 @@
 </div>
 </p>
 
-
-
 <h3 id="introduction">Introduction</h3>
 
 <ul>
@@ -68,6 +68,7 @@
 <li><strong>Clang</strong> is ~language-complete: <a href="https://clang.llvm.org/cxx_status.html">status</a></li>
 <li><strong>Visual C++</strong>: <a href="https://docs.microsoft.com/en-us/cpp/cpp-conformance-improvements-2017">news</a></li>
 <li>Another great presentation: <a href="https://jfbastien.github.io/what-is-cpp17/#/8/1">https://jfbastien.github.io/what-is-cpp17/#/8/1</a></li>
+<li>Another great cheatsheet: <a href="https://github.com/AnthonyCalandra/modern-cpp-features#structured-bindings">https://github.com/AnthonyCalandra/modern-cpp-features#structured-bindings</a></li>
 </ul>
 
 
@@ -139,7 +140,32 @@ tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">
    cout </span><span class="pun">&lt;&lt;</span><span class="pln"> name </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">" has "</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> age </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">" years\n"</span><span class="pun">;</span><span class="pln">
 </span><span class="pun">}</span></code></pre>
 
-<p>Play: <a href="http://melpon.org/wandbox/permlink/MlhKfrjJpgs8g5EQ">http://melpon.org/wandbox/permlink/MlhKfrjJpgs8g5EQ</a></p>
+<p>Note: Structured binding <strong>does not copy values</strong>, rather it references them:</p>
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="typ">Foo</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="pun">~</span><span class="typ">Foo</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"dtor\n"</span><span class="pun">;</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
+  </span><span class="typ">int</span><span class="pln"> i</span><span class="pun">,</span><span class="pln"> j</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">};</span><span class="pln">
+
+</span><span class="typ">Foo</span><span class="pln"> make</span><span class="pun">()</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">a</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> make</span><span class="pun">();</span><span class="pln">
+  cout </span><span class="pun">&lt;&lt;</span><span class="pln"> a </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">", "</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> b </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"\n"</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>Will print:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pln">
+dtor</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/DxWo0TiMeWG6TFSo">http://melpon.org/wandbox/permlink/DxWo0TiMeWG6TFSo</a></p>
 
 
 
@@ -193,6 +219,24 @@ tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">
 <p>See <a href="http://en.cppreference.com/w/cpp/language/class_template_deduction#User-defined_deduction_guides">here</a> for more details on <strong>custom deduction guides</strong>.</p>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/yeP0bQKndcM8O6vZ">http://melpon.org/wandbox/permlink/yeP0bQKndcM8O6vZ</a></p>
+
+
+
+<h3 id="ifswitch-statements-with-initializers">if/switch statements with initializers</h3>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/if">http://en.cppreference.com/w/cpp/language/if</a></p>
+
+<p>New versions of the if and switch statements which simplify common code patterns and help users keep scopes tight:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">&gt;</span><span class="pln"> m </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">{</span><span class="str">"A"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"B"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+</span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">auto</span><span class="pln"> it </span><span class="pun">=</span><span class="pln"> m</span><span class="pun">.</span><span class="pln">find</span><span class="pun">(</span><span class="str">"B"</span><span class="pun">);</span><span class="pln"> it</span><span class="pun">!=</span><span class="pln">end</span><span class="pun">(</span><span class="pln">m</span><span class="pun">))</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// ...</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>Play: <a href="http://melpon.org/wandbox/permlink/ptdZG2VZAGs4EGEb">http://melpon.org/wandbox/permlink/ptdZG2VZAGs4EGEb</a></p>
 
 
 
@@ -347,7 +391,7 @@ string_view qstrv </span><span class="pun">{</span><span class="pln">qstr</span>
 sv</span><span class="pun">.</span><span class="pln">remove_prefix</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">min</span><span class="pun">(</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">find_first_not_of</span><span class="pun">(</span><span class="str">" "</span><span class="pun">),</span><span class="pln"> sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()));</span><span class="pln"> 
 sv</span><span class="pun">.</span><span class="pln">remove_suffix</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">min</span><span class="pun">(</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()-</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">find_last_not_of</span><span class="pun">(</span><span class="str">" "</span><span class="pun">)-</span><span class="lit">1</span><span class="pun">,</span><span class="pln"> sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()));</span><span class="pln"> </span></code></pre>
 
-<p>What’s that?</p>
+<p>Does it recall you anything?</p>
 
 <p>Yes, <strong>trim</strong>. Without creating a new string instance.</p>
 
@@ -647,7 +691,7 @@ std</span><span class="pun">::</span><span class="pln">apply</span><span class="
 
 std</span><span class="pun">::</span><span class="pln">invoke</span><span class="pun">(</span><span class="pln">print</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">{});</span></code></pre>
 
-<p>Play: <a href="http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ#wandbox-resultwindow-code-body-24">http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ#wandbox-resultwindow-code-body-24</a></p>
+<p>Play: <a href="http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ">http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ</a></p>
 
 
 
@@ -674,9 +718,7 @@ std</span><span class="pun">::</span><span class="pln">invoke</span><span class=
    </span><span class="pun">}</span><span class="pln">
 </span><span class="pun">};</span></code></pre>
 
-<p>Play: <a href="http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o#wandbox-resultwindow-code-body-17">http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o#wandbox-resultwindow-code-body-17</a></p>
-
-
+<p>Play: <a href="http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o">http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o</a></p>
 
 <h3 id="if-constexpr">if constexpr</h3>
 
