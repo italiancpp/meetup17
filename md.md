@@ -1,7 +1,8 @@
 # Play with C++17
 
 Information and Examples to experience C++17.
-[Last update: Feb 14, 2017)
+
+[Last update: Feb 17, 2017)
 
 This document has been written by [Marco Arena](http://marcoarena.wordpress.com) for some [Italian C++ Community](http://italiancpp.org) Meetups.
 
@@ -78,7 +79,33 @@ for (auto& [name, age] : nameToAge)
 }
 ```
 
-Play: http://melpon.org/wandbox/permlink/MlhKfrjJpgs8g5EQ
+Note: Structured binding **does not copy values**, rather it references them:
+
+```cpp
+struct Foo
+{
+  ~Foo() { cout << "dtor\n"; }
+  int i, j;
+};
+
+Foo make()
+{
+  return { 1, 3 };
+}
+
+{
+  auto [a, b] = make();
+  cout << a << ", " << b << "\n";
+}
+```
+Will print:
+```
+1, 3
+dtor
+
+```
+
+Play: http://melpon.org/wandbox/permlink/DxWo0TiMeWG6TFSo
 
 ### Template argument deduction for class templates
 
@@ -128,6 +155,22 @@ LambdaVisitor visitor{ [](const Node& n) {...} };
 See [here](http://en.cppreference.com/w/cpp/language/class_template_deduction#User-defined_deduction_guides) for more details on **custom deduction guides**.
 
 Play: http://melpon.org/wandbox/permlink/yeP0bQKndcM8O6vZ
+
+### if/switch statements with initializers
+
+Documentation: http://en.cppreference.com/w/cpp/language/if
+
+New versions of the if and switch statements which simplify common code patterns and help users keep scopes tight:
+
+```cpp
+map<string, int> m = { {"A", 1}, {"B", 2 };
+if (auto it = m.find("B"); it!=end(m))
+{
+  // ...
+}
+```
+
+Play: http://melpon.org/wandbox/permlink/ptdZG2VZAGs4EGEb
 
 ### Folding expressions
 
@@ -272,7 +315,7 @@ sv.remove_prefix(std::min(sv.find_first_not_of(" "), sv.size()));
 sv.remove_suffix(std::min(sv.size()-sv.find_last_not_of(" ")-1, sv.size())); 
 ```
 
-What's that?
+Does it recall you anything?
 
 Yes, **trim**. Without creating a new string instance.
 
@@ -541,7 +584,7 @@ void print(string, int, Foo);
 std::invoke(print, "hello"s, 10, Foo{});
 ```
 
-Play: http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ#wandbox-resultwindow-code-body-24
+Play: http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ
 
 ### make_from_tuple
 
@@ -565,7 +608,7 @@ public:
 };
 ```
 
-Play: http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o#wandbox-resultwindow-code-body-17
+Play: http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o
 
 ### if constexpr
 
