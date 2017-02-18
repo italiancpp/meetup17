@@ -57,6 +57,8 @@
 </div>
 </p>
 
+
+
 <h3 id="introduction">Introduction</h3>
 
 <ul>
@@ -93,26 +95,26 @@
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">tuple</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">float</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs ">tuple&lt;<span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>, <span class="hljs-keyword">int</span>, <span class="hljs-keyword">float</span>&gt; MakeRGBa() { ... }
 
-</span><span class="typ">int</span><span class="pln"> r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">;</span><span class="pln"> </span><span class="typ">float</span><span class="pln"> a</span><span class="pun">;</span><span class="pln">
-tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> a</span><span class="pun">)</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span><span class="pln">
+<span class="hljs-keyword">int</span> r, g, b; <span class="hljs-keyword">float</span> a;
+tie(r, g, b, a) = MakeRGBa();
 
-array</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">MakeRGB</span><span class="pun">();</span><span class="pln">
-</span><span class="com">// won't compile</span><span class="pln">
-</span><span class="typ">int</span><span class="pln"> r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">;</span><span class="pln">
-tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">)</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGB</span><span class="pun">();</span><span class="pln">
+<span class="hljs-stl_container"><span class="hljs-built_in">array</span>&lt;<span class="hljs-keyword">int</span>, 3&gt;</span> MakeRGB();
+<span class="hljs-comment">// won't compile</span>
+<span class="hljs-keyword">int</span> r, g, b;
+tie(r, g, b) = MakeRGB();
 
-</span><span class="kwd">struct</span><span class="pln"> </span><span class="typ">RGBa</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-   </span><span class="typ">int</span><span class="pln"> r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">;</span><span class="pln">
-   </span><span class="typ">float</span><span class="pln"> a</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">};</span><span class="pln">
-</span><span class="typ">RGBa</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span><span class="pln">
+<span class="hljs-keyword">struct</span> RGBa
+{
+   <span class="hljs-keyword">int</span> r, g, b;
+   <span class="hljs-keyword">float</span> a;
+};
+RGBa MakeRGBa();
 
-</span><span class="typ">int</span><span class="pln"> r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">;</span><span class="pln"> </span><span class="typ">float</span><span class="pln"> a</span><span class="pun">;</span><span class="pln">
-</span><span class="com">// won't compile</span><span class="pln">
-tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> a</span><span class="pun">)</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span></code></pre>
+<span class="hljs-keyword">int</span> r, g, b; <span class="hljs-keyword">float</span> a;
+<span class="hljs-comment">// won't compile</span>
+tie(r, g, b, a) = MakeRGBa();</code></pre>
 
 <p>Types that are <strong>Destructurable</strong> can benefit of <em>Structured bindings</em>:</p>
 
@@ -128,42 +130,45 @@ tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> a</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">auto</span> [r, g, b, a] = MakeRGBa();</code></pre>
 
 <p>Let’s use structured bindings to beautifully iterate on a std::map:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">&gt;</span><span class="pln"> nameToAge</span><span class="pun">;</span><span class="pln">
-</span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> </span><span class="pun">[</span><span class="pln">name</span><span class="pun">,</span><span class="pln"> age</span><span class="pun">]</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> nameToAge</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-   cout </span><span class="pun">&lt;&lt;</span><span class="pln"> name </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">" has "</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> age </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">" years\n"</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-keyword">int</span>&gt;</span> nameToAge;
+<span class="hljs-keyword">for</span> (<span class="hljs-keyword">auto</span>&amp; [name, age] : nameToAge)
+{
+   <span class="hljs-built_in">cout</span> &lt;&lt; name &lt;&lt; <span class="hljs-string">" has "</span> &lt;&lt; age &lt;&lt; <span class="hljs-string">" years\n"</span>;
+}</code></pre>
 
 <p>Note: Structured binding <strong>does not copy values</strong>, rather it references them:</p>
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="typ">Foo</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="pun">~</span><span class="typ">Foo</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"dtor\n"</span><span class="pun">;</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
-  </span><span class="typ">int</span><span class="pln"> i</span><span class="pun">,</span><span class="pln"> j</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">};</span><span class="pln">
 
-</span><span class="typ">Foo</span><span class="pln"> make</span><span class="pun">()</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
-</span><span class="pun">}</span><span class="pln">
 
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">a</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> make</span><span class="pun">();</span><span class="pln">
-  cout </span><span class="pun">&lt;&lt;</span><span class="pln"> a </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">", "</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> b </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"\n"</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">struct</span> Foo
+{
+  ~Foo() { <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"dtor\n"</span>; }
+  <span class="hljs-keyword">int</span> i, j;
+};
+
+Foo make()
+{
+  <span class="hljs-keyword">return</span> { <span class="hljs-number">1</span>, <span class="hljs-number">3</span> };
+}
+
+{
+  <span class="hljs-keyword">auto</span> [a, b] = make();
+  <span class="hljs-built_in">cout</span> &lt;&lt; a &lt;&lt; <span class="hljs-string">", "</span> &lt;&lt; b &lt;&lt; <span class="hljs-string">"\n"</span>;
+}</code></pre>
 
 <p>Will print:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pln">
-dtor</span></code></pre>
+<pre class="prettyprint"><code class=" hljs ">1, 3
+dtor
+</code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/DxWo0TiMeWG6TFSo">http://melpon.org/wandbox/permlink/DxWo0TiMeWG6TFSo</a></p>
 
@@ -177,44 +182,44 @@ dtor</span></code></pre>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">Func</span><span class="pun">&gt;</span><span class="pln">
-</span><span class="kwd">class</span><span class="pln"> </span><span class="typ">LambdaVisitor</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> </span><span class="typ">SomeVisitor</span><span class="pln"> 
-</span><span class="pun">{</span><span class="pln">
-   </span><span class="typ">Func</span><span class="pln"> visitFn</span><span class="pun">;</span><span class="pln">
-</span><span class="kwd">public</span><span class="pun">:</span><span class="pln">
-   </span><span class="typ">LambdaVisitor</span><span class="pun">(</span><span class="typ">Func</span><span class="pln"> f</span><span class="pun">)</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> visitFn</span><span class="pun">{</span><span class="pln">f</span><span class="pun">}</span><span class="pln"> </span><span class="pun">{}</span><span class="pln">
-   </span><span class="kwd">void</span><span class="pln"> </span><span class="typ">Visit</span><span class="pun">(</span><span class="kwd">const</span><span class="pln"> </span><span class="typ">Node</span><span class="pun">&amp;</span><span class="pln"> node</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> visitFn</span><span class="pun">(</span><span class="pln">node</span><span class="pun">);</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
-   </span><span class="com">// ...</span><span class="pln">
-</span><span class="pun">};</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> Func&gt;
+<span class="hljs-keyword">class</span> LambdaVisitor : SomeVisitor 
+{
+   Func visitFn;
+<span class="hljs-keyword">public</span>:
+   LambdaVisitor(Func f) : visitFn{f} {}
+   <span class="hljs-keyword">void</span> Visit(<span class="hljs-keyword">const</span> Node&amp; node) { visitFn(node); }
+   <span class="hljs-comment">// ...</span>
+};
 
-</span><span class="com">// make function to deduce 'Func'</span><span class="pln">
-</span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">Func</span><span class="pun">&gt;</span><span class="pln"> 
-</span><span class="typ">LambdaVisitor</span><span class="pun">&lt;</span><span class="typ">Func</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">MakeLambdaVisitor</span><span class="pun">(</span><span class="typ">Func</span><span class="pln"> f</span><span class="pun">)</span><span class="pln"> 
-</span><span class="pun">{</span><span class="pln">
-   </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span><span class="pln">f</span><span class="pun">};</span><span class="pln">
-</span><span class="pun">}</span><span class="pln">
+<span class="hljs-comment">// make function to deduce 'Func'</span>
+<span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> Func&gt; 
+LambdaVisitor&lt;Func&gt; MakeLambdaVisitor(Func f) 
+{
+   <span class="hljs-keyword">return</span> {f};
+}
 
-</span><span class="kwd">auto</span><span class="pln"> visitor </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeLambdaVisitor</span><span class="pun">([](</span><span class="kwd">const</span><span class="pln"> </span><span class="typ">Node</span><span class="pun">&amp;</span><span class="pln"> n</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{...});</span></code></pre>
+<span class="hljs-keyword">auto</span> visitor = MakeLambdaVisitor([](<span class="hljs-keyword">const</span> Node&amp; n) {...});</code></pre>
 
 <p>What if LambdaVisitor has “scoped” ownership (e.g. is not copyable nor moveable)?</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="str">&lt;typenameFunc&gt;</span><span class="pln">
-</span><span class="kwd">class</span><span class="pln"> </span><span class="typ">LambdaVisitor</span><span class="pun">:</span><span class="pln"> </span><span class="typ">SomeVisitor</span><span class="pln"> 
-</span><span class="pun">{</span><span class="pln">
-   </span><span class="typ">Funcvisit</span><span class="pln"> </span><span class="typ">Fn</span><span class="pun">;</span><span class="pln"> lock_guard</span><span class="str">&lt;mutex&gt;</span><span class="pln"> l</span><span class="pun">;</span><span class="pln">
-   </span><span class="com">// the rest is the same as before</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">template</span>&lt;typenameFunc&gt;
+<span class="hljs-keyword">class</span> LambdaVisitor: SomeVisitor 
+{
+   Funcvisit Fn; lock_guard&lt;mutex&gt; l;
+   <span class="hljs-comment">// the rest is the same as before</span></code></pre>
 
 <p>C++17 introduces “Template argument deduction for class templates”:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">class</span><span class="pln"> </span><span class="typ">LambdaVisitor</span><span class="pun">;</span><span class="pln"> </span><span class="com">// same as before</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">class</span> LambdaVisitor; <span class="hljs-comment">// same as before</span>
 
-</span><span class="com">// don't need the make-function anymore</span><span class="pln">
+<span class="hljs-comment">// don't need the make-function anymore</span>
 
-</span><span class="typ">LambdaVisitor</span><span class="pln"> visitor</span><span class="pun">{</span><span class="pln"> </span><span class="pun">[](</span><span class="kwd">const</span><span class="pln"> </span><span class="typ">Node</span><span class="pun">&amp;</span><span class="pln"> n</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{...}</span><span class="pln"> </span><span class="pun">};</span></code></pre>
+LambdaVisitor visitor{ [](<span class="hljs-keyword">const</span> Node&amp; n) {...} };</code></pre>
 
 <p>See <a href="http://en.cppreference.com/w/cpp/language/class_template_deduction#User-defined_deduction_guides">here</a> for more details on <strong>custom deduction guides</strong>.</p>
 
@@ -230,11 +235,11 @@ dtor</span></code></pre>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">&gt;</span><span class="pln"> m </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">{</span><span class="str">"A"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"B"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
-</span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">auto</span><span class="pln"> it </span><span class="pun">=</span><span class="pln"> m</span><span class="pun">.</span><span class="pln">find</span><span class="pun">(</span><span class="str">"B"</span><span class="pun">);</span><span class="pln"> it</span><span class="pun">!=</span><span class="pln">end</span><span class="pun">(</span><span class="pln">m</span><span class="pun">))</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="com">// ...</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-keyword">int</span>&gt;</span> m = { {<span class="hljs-string">"A"</span>, <span class="hljs-number">1</span>}, {<span class="hljs-string">"B"</span>, <span class="hljs-number">2</span> };
+<span class="hljs-keyword">if</span> (<span class="hljs-keyword">auto</span> it = m.find(<span class="hljs-string">"B"</span>); it!=end(m))
+{
+  <span class="hljs-comment">// ...</span>
+}</code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/ptdZG2VZAGs4EGEb">http://melpon.org/wandbox/permlink/ptdZG2VZAGs4EGEb</a></p>
 
@@ -248,24 +253,24 @@ dtor</span></code></pre>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> </span><span class="typ">Args</span><span class="pun">&gt;</span><span class="pln">
-</span><span class="kwd">auto</span><span class="pln"> sum</span><span class="pun">(</span><span class="typ">Args</span><span class="pun">...</span><span class="pln"> args</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-    </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">(</span><span class="lit">0</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">+</span><span class="pln"> args</span><span class="pun">);</span><span class="pln">
-</span><span class="pun">}</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span>... Args&gt;
+<span class="hljs-keyword">auto</span> sum(Args... args)
+{
+    <span class="hljs-keyword">return</span> (<span class="hljs-number">0</span> + ... + args);
+}
 
-</span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> F</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln">
-</span><span class="kwd">void</span><span class="pln"> for_each</span><span class="pun">(</span><span class="pln">F fun</span><span class="pun">,</span><span class="pln"> T</span><span class="pun">&amp;&amp;...</span><span class="pln"> args</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-    </span><span class="pun">(</span><span class="pln">fun </span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">forward</span><span class="pun">&lt;</span><span class="pln">T</span><span class="pun">&gt;(</span><span class="pln">args</span><span class="pun">)),</span><span class="pln"> </span><span class="pun">...);</span><span class="pln">
-</span><span class="pun">}</span><span class="pln">
+<span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> F, <span class="hljs-keyword">typename</span>... T&gt;
+<span class="hljs-keyword">void</span> for_each(F fun, T&amp;&amp;... args)
+{
+    (fun (<span class="hljs-built_in">std</span>::forward&lt;T&gt;(args)), ...);
+}
 
 
-cout </span><span class="pun">&lt;&lt;</span><span class="pln"> sum</span><span class="pun">(</span><span class="lit">1</span><span class="pun">,</span><span class="lit">2</span><span class="pun">,</span><span class="lit">3</span><span class="pun">,</span><span class="lit">4</span><span class="pun">)</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> endl</span><span class="pun">;</span><span class="pln">
+<span class="hljs-built_in">cout</span> &lt;&lt; sum(<span class="hljs-number">1</span>,<span class="hljs-number">2</span>,<span class="hljs-number">3</span>,<span class="hljs-number">4</span>) &lt;&lt; endl;
 
-for_each</span><span class="pun">([](</span><span class="kwd">auto</span><span class="pln"> elem</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-    cout </span><span class="pun">&lt;&lt;</span><span class="pln"> elem </span><span class="pun">&lt;&lt;</span><span class="pln"> endl</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">},</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10.0</span><span class="pun">);</span></code></pre>
+for_each([](<span class="hljs-keyword">auto</span> elem) {
+    <span class="hljs-built_in">cout</span> &lt;&lt; elem &lt;&lt; endl;
+}, <span class="hljs-number">1</span>, <span class="hljs-string">"hello"</span>, <span class="hljs-number">10.0</span>);</code></pre>
 
 <p>More on <a href="http://www.italiancpp.org/2015/06/15/folding-expressions">this article by Marco Alesiani</a>.</p>
 
@@ -286,25 +291,25 @@ The good news is that we already have a long experience with such additions.</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">vector</span><span class="str">&lt;string&gt;</span><span class="pln"> split</span><span class="pun">(</span><span class="kwd">const</span><span class="pln"> string</span><span class="pun">&amp;</span><span class="pln"> str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="typ">vector</span><span class="str">&lt;string&gt;</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">string</span>&gt;</span> split(<span class="hljs-keyword">const</span> <span class="hljs-built_in">string</span>&amp; str, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* delims)
+{
+  <span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;<span class="hljs-built_in">string</span>&gt;</span> ret;
 
-  string</span><span class="pun">::</span><span class="pln">size_type start </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
-  </span><span class="kwd">auto</span><span class="pln"> pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
-  </span><span class="kwd">while</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> string</span><span class="pun">::</span><span class="pln">npos</span><span class="pun">)</span><span class="pln">
-  </span><span class="pun">{</span><span class="pln">
-     </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> start</span><span class="pun">)</span><span class="pln">
-     </span><span class="pun">{</span><span class="pln">
-        ret</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> pos </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
-     </span><span class="pun">}</span><span class="pln">
-     start </span><span class="pun">=</span><span class="pln"> pos </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">;</span><span class="pln">
-     pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
-  </span><span class="pun">}</span><span class="pln">
-  </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">start </span><span class="pun">&lt;</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">())</span><span class="pln">
-  ret</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">()</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
-  </span><span class="kwd">return</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+  <span class="hljs-built_in">string</span>::size_type start = <span class="hljs-number">0</span>;
+  <span class="hljs-keyword">auto</span> pos = str.find_first_of(delims, start);
+  <span class="hljs-keyword">while</span> (pos != <span class="hljs-built_in">string</span>::npos)
+  {
+     <span class="hljs-keyword">if</span> (pos != start)
+     {
+        ret.push_back(str.substr(start, pos - start));
+     }
+     start = pos + <span class="hljs-number">1</span>;
+     pos = str.find_first_of(delims, start);
+  }
+  <span class="hljs-keyword">if</span> (start &lt; str.length())
+  ret.push_back(str.substr(start, str.length() - start));
+  <span class="hljs-keyword">return</span> ret;
+}</code></pre>
 
 <p>Basically, I don’t want to reallocate strings that are already part of the string that I’m splitting. <br>
 Can I use offsets?</p>
@@ -313,47 +318,47 @@ Can I use offsets?</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">vector</span><span class="str">&lt;string_view&gt;</span><span class="pln"> split</span><span class="pun">(</span><span class="pln">string_view str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-   </span><span class="typ">vector</span><span class="str">&lt;string_view&gt;</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;string_view&gt;</span> split(string_view str, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* delims)
+{
+   <span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;string_view&gt;</span> ret;
 
-   string_view</span><span class="pun">::</span><span class="pln">size_type start </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
-   </span><span class="kwd">auto</span><span class="pln"> pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
-   </span><span class="kwd">while</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> string_view</span><span class="pun">::</span><span class="pln">npos</span><span class="pun">)</span><span class="pln">
-   </span><span class="pun">{</span><span class="pln">
-      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> start</span><span class="pun">)</span><span class="pln">
-      </span><span class="pun">{</span><span class="pln">
-         ret</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> pos </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
-      </span><span class="pun">}</span><span class="pln">
-      start </span><span class="pun">=</span><span class="pln"> pos </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">;</span><span class="pln">
-      pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
-   </span><span class="pun">}</span><span class="pln">
-   </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">start </span><span class="pun">&lt;</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">())</span><span class="pln">
-      ret</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">()</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
-   </span><span class="kwd">return</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+   string_view::size_type start = <span class="hljs-number">0</span>;
+   <span class="hljs-keyword">auto</span> pos = str.find_first_of(delims, start);
+   <span class="hljs-keyword">while</span> (pos != string_view::npos)
+   {
+      <span class="hljs-keyword">if</span> (pos != start)
+      {
+         ret.push_back(str.substr(start, pos - start));
+      }
+      start = pos + <span class="hljs-number">1</span>;
+      pos = str.find_first_of(delims, start);
+   }
+   <span class="hljs-keyword">if</span> (start &lt; str.length())
+      ret.push_back(str.substr(start, str.length() - start));
+   <span class="hljs-keyword">return</span> ret;
+}</code></pre>
 
 <p>Or, more generic:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">Action</span><span class="pun">&gt;</span><span class="pln">
-</span><span class="kwd">void</span><span class="pln"> on_each_token</span><span class="pun">(</span><span class="pln">string_view str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Action</span><span class="pln"> action</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-   string_view</span><span class="pun">::</span><span class="pln">size_type start </span><span class="pun">=</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
-   </span><span class="kwd">auto</span><span class="pln"> pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
-   </span><span class="kwd">while</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> string_view</span><span class="pun">::</span><span class="pln">npos</span><span class="pun">)</span><span class="pln">
-   </span><span class="pun">{</span><span class="pln">
-      </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">pos </span><span class="pun">!=</span><span class="pln"> start</span><span class="pun">)</span><span class="pln">
-      </span><span class="pun">{</span><span class="pln">
-         action</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> pos </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
-      </span><span class="pun">}</span><span class="pln">
-      start </span><span class="pun">=</span><span class="pln"> pos </span><span class="pun">+</span><span class="pln"> </span><span class="lit">1</span><span class="pun">;</span><span class="pln">
-      pos </span><span class="pun">=</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">find_first_of</span><span class="pun">(</span><span class="pln">delims</span><span class="pun">,</span><span class="pln"> start</span><span class="pun">);</span><span class="pln">
-   </span><span class="pun">}</span><span class="pln">
-   </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">start </span><span class="pun">&lt;</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">())</span><span class="pln">
-      action</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">()</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> Action&gt;
+<span class="hljs-keyword">void</span> on_each_token(string_view str, <span class="hljs-keyword">const</span> <span class="hljs-keyword">char</span>* delims, Action action)
+{
+   string_view::size_type start = <span class="hljs-number">0</span>;
+   <span class="hljs-keyword">auto</span> pos = str.find_first_of(delims, start);
+   <span class="hljs-keyword">while</span> (pos != string_view::npos)
+   {
+      <span class="hljs-keyword">if</span> (pos != start)
+      {
+         action(str.substr(start, pos - start));
+      }
+      start = pos + <span class="hljs-number">1</span>;
+      pos = str.find_first_of(delims, start);
+   }
+   <span class="hljs-keyword">if</span> (start &lt; str.length())
+      action(str.substr(start, str.length() - start));
+}</code></pre>
 
 <p>string_view is an object that can refer to a constant contiguous sequence of char-like objects with the first element of the sequence at position zero. <br>
 I repeat: string_view is a reference. This means: it does not participate in the ownership of the sequence.</p>
@@ -371,25 +376,25 @@ I repeat: string_view is a reference. This means: it does not participate in the
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">CString</span><span class="pln"> cstr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">...</span><span class="pln">
-string_view cstrv </span><span class="pun">{</span><span class="pln">cstr</span><span class="pun">.</span><span class="typ">GetString</span><span class="pun">()};</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs ">CString cstr = ...
+string_view cstrv {cstr.GetString()};
 
-string stdstr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">...</span><span class="pln">
-string_view stdstrv </span><span class="pun">{</span><span class="pln">stdstr</span><span class="pun">};</span><span class="pln">
+<span class="hljs-built_in">string</span> stdstr = ...
+string_view stdstrv {stdstr};
 
-</span><span class="typ">QString</span><span class="pln"> qstr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">...</span><span class="pln">
-string_view qstrv </span><span class="pun">{</span><span class="pln">qstr</span><span class="pun">.</span><span class="pln">toLatin1</span><span class="pun">().</span><span class="pln">constData</span><span class="pun">()};</span><span class="pln">
+QString qstr = ...
+string_view qstrv {qstr.toLatin1().constData()};
 
-</span><span class="com">// only one implementation</span><span class="pln">
-</span><span class="typ">ReturnType</span><span class="pln"> readonly_on_string_function</span><span class="pun">(</span><span class="pln">string_view sv</span><span class="pun">);</span><span class="pln"> </span><span class="com">// only one implementation</span></code></pre>
+<span class="hljs-comment">// only one implementation</span>
+ReturnType readonly_on_string_function(string_view sv); <span class="hljs-comment">// only one implementation</span></code></pre>
 
 <p>Whenever you can do operations that are just the matter of “moving an offset” on the original string, string_view is your best friend:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">string_view sv </span><span class="pun">=</span><span class="pln"> name</span><span class="pun">.</span><span class="typ">GetString</span><span class="pun">();</span><span class="pln"> </span><span class="com">// GetString() returns a null-terminated const char*</span><span class="pln">
-sv</span><span class="pun">.</span><span class="pln">remove_prefix</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">min</span><span class="pun">(</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">find_first_not_of</span><span class="pun">(</span><span class="str">" "</span><span class="pun">),</span><span class="pln"> sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()));</span><span class="pln"> 
-sv</span><span class="pun">.</span><span class="pln">remove_suffix</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">min</span><span class="pun">(</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()-</span><span class="pln">sv</span><span class="pun">.</span><span class="pln">find_last_not_of</span><span class="pun">(</span><span class="str">" "</span><span class="pun">)-</span><span class="lit">1</span><span class="pun">,</span><span class="pln"> sv</span><span class="pun">.</span><span class="pln">size</span><span class="pun">()));</span><span class="pln"> </span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs ">string_view sv = name.GetString(); <span class="hljs-comment">// GetString() returns a null-terminated const char*</span>
+sv.remove_prefix(<span class="hljs-built_in">std</span>::min(sv.find_first_not_of(<span class="hljs-string">" "</span>), sv.size())); 
+sv.remove_suffix(<span class="hljs-built_in">std</span>::min(sv.size()-sv.find_last_not_of(<span class="hljs-string">" "</span>)-<span class="hljs-number">1</span>, sv.size())); </code></pre>
 
 <p>Does it recall you anything?</p>
 
@@ -415,25 +420,25 @@ sv</span><span class="pun">.</span><span class="pln">remove_suffix</span><span c
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> K</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> V</span><span class="pun">&gt;</span><span class="pln">
-string</span><span class="pun">&amp;</span><span class="pln"> insert_or_assign</span><span class="pun">(</span><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">K</span><span class="pun">,</span><span class="pln"> V</span><span class="pun">&gt;&amp;</span><span class="pln"> m</span><span class="pun">,</span><span class="pln"> K</span><span class="pun">&amp;&amp;</span><span class="pln"> k</span><span class="pun">,</span><span class="pln"> V</span><span class="pun">&amp;&amp;</span><span class="pln"> v</span><span class="pun">)</span><span class="pln"> 
-</span><span class="pun">{</span><span class="pln">
-    </span><span class="kwd">auto</span><span class="pln"> p </span><span class="pun">=</span><span class="pln"> m</span><span class="pun">.</span><span class="pln">equal_range</span><span class="pun">(</span><span class="pln">k</span><span class="pun">);</span><span class="pln">
-    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">p</span><span class="pun">.</span><span class="pln">first </span><span class="pun">!=</span><span class="pln"> p</span><span class="pun">.</span><span class="pln">second</span><span class="pun">)</span><span class="pln">
-        </span><span class="kwd">return</span><span class="pln"> p</span><span class="pun">.</span><span class="pln">first</span><span class="pun">-&gt;</span><span class="pln">second </span><span class="pun">=</span><span class="pln"> forward</span><span class="pun">&lt;</span><span class="pln">V</span><span class="pun">&gt;(</span><span class="pln">v</span><span class="pun">);</span><span class="pln">
-    </span><span class="kwd">return</span><span class="pln"> m</span><span class="pun">.</span><span class="pln">emplace_hint</span><span class="pun">(</span><span class="pln">p</span><span class="pun">.</span><span class="pln">first</span><span class="pun">,</span><span class="pln"> k</span><span class="pun">,</span><span class="pln"> forward</span><span class="pun">&lt;</span><span class="pln">V</span><span class="pun">&gt;(</span><span class="pln">v</span><span class="pun">))-&gt;</span><span class="pln">second</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">}</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> K, <span class="hljs-keyword">typename</span> V&gt;
+<span class="hljs-built_in">string</span>&amp; insert_or_assign(<span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;K, V&gt;</span>&amp; m, K&amp;&amp; k, V&amp;&amp; v) 
+{
+    <span class="hljs-keyword">auto</span> p = m.equal_range(k);
+    <span class="hljs-keyword">if</span> (p.first != p.second)
+        <span class="hljs-keyword">return</span> p.first-&gt;second = forward&lt;V&gt;(v);
+    <span class="hljs-keyword">return</span> m.emplace_hint(p.first, k, forward&lt;V&gt;(v))-&gt;second;
+}
 
-</span><span class="typ">map</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> m</span><span class="pun">;</span><span class="pln">
-insert_or_assign</span><span class="pun">(</span><span class="pln">m</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello world C++17!"</span><span class="pln">s</span><span class="pun">);</span><span class="pln">
-insert_or_assign</span><span class="pun">(</span><span class="pln">m</span><span class="pun">,</span><span class="pln"> </span><span class="lit">20</span><span class="pun">,</span><span class="pln"> </span><span class="str">"associative containers 2.0"</span><span class="pln">s</span><span class="pun">);</span></code></pre>
+<span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-keyword">int</span>, <span class="hljs-built_in">string</span>&gt;</span> m;
+insert_or_assign(m, <span class="hljs-number">10</span>, <span class="hljs-string">"hello world C++17!"</span>s);
+insert_or_assign(m, <span class="hljs-number">20</span>, <span class="hljs-string">"associative containers 2.0"</span>s);</code></pre>
 
 <p>Finally, C++17 makes makes this part of the container’s interface:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">m</span><span class="pun">.</span><span class="pln">insert_or_assign</span><span class="pun">(</span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello world C++17!"</span><span class="pln">s</span><span class="pun">);</span><span class="pln">
-m</span><span class="pun">.</span><span class="pln">insert_or_assign</span><span class="pun">(</span><span class="lit">20</span><span class="pun">,</span><span class="pln"> </span><span class="str">"associative containers 2.0"</span><span class="pln">s</span><span class="pun">);</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs ">m.insert_or_assign(<span class="hljs-number">10</span>, <span class="hljs-string">"hello world C++17!"</span>s);
+m.insert_or_assign(<span class="hljs-number">20</span>, <span class="hljs-string">"associative containers 2.0"</span>s);</code></pre>
 
 <p>Why this is even better than any hand-made “insert or update”: <br>
 * implementers may take advantage or internal details of the container; <br>
@@ -451,18 +456,18 @@ m</span><span class="pun">.</span><span class="pln">insert_or_assign</span><span
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> unique_ptr</span><span class="str">&lt;int&gt;</span><span class="pun">&gt;</span><span class="pln"> m2</span><span class="pun">;</span><span class="pln">
-m2</span><span class="pun">[</span><span class="str">"A"</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="kwd">nullptr</span><span class="pun">;</span><span class="pln">  
-ptr </span><span class="pun">=</span><span class="pln"> make_unique</span><span class="str">&lt;int&gt;</span><span class="pun">(</span><span class="lit">23</span><span class="pun">);</span><span class="pln">
-m2</span><span class="pun">.</span><span class="pln">try_emplace</span><span class="pun">(</span><span class="str">"A"</span><span class="pun">,</span><span class="pln"> move</span><span class="pun">(</span><span class="pln">ptr</span><span class="pun">));</span><span class="pln">
-assert</span><span class="pun">(</span><span class="pln">ptr</span><span class="pun">);</span><span class="pln"> </span><span class="com">// will never fire (1)</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-built_in">string</span>, unique_ptr&lt;<span class="hljs-keyword">int</span>&gt;</span>&gt; m2;
+m2[<span class="hljs-string">"A"</span>] = <span class="hljs-keyword">nullptr</span>;  
+ptr = make_unique&lt;<span class="hljs-keyword">int</span>&gt;(<span class="hljs-number">23</span>);
+m2.try_emplace(<span class="hljs-string">"A"</span>, move(ptr));
+assert(ptr); <span class="hljs-comment">// will never fire (1)</span>
 
-</span><span class="com">// spot the differences (2):</span><span class="pln">
-</span><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> m3</span><span class="pun">;</span><span class="pln">
-m3</span><span class="pun">.</span><span class="pln">emplace</span><span class="pun">(</span><span class="pln">piecewise_construct</span><span class="pun">,</span><span class="pln"> forward_as_tuple</span><span class="pun">(</span><span class="str">"pippo"</span><span class="pun">),</span><span class="pln"> forward_as_tuple</span><span class="pun">(</span><span class="lit">5</span><span class="pun">,</span><span class="pln"> </span><span class="str">'A'</span><span class="pun">));</span><span class="pln">
-cout </span><span class="pun">&lt;&lt;</span><span class="pln"> m3</span><span class="pun">[</span><span class="str">"pippo"</span><span class="pun">]</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"\n"</span><span class="pun">;</span><span class="pln">
-m3</span><span class="pun">.</span><span class="pln">try_emplace</span><span class="pun">(</span><span class="str">"pluto"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">5</span><span class="pun">,</span><span class="pln"> </span><span class="str">'A'</span><span class="pun">);</span><span class="pln"> </span><span class="com">// cute</span><span class="pln">
-cout </span><span class="pun">&lt;&lt;</span><span class="pln"> m3</span><span class="pun">[</span><span class="str">"pluto"</span><span class="pun">]</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"\n\n"</span><span class="pun">;</span></code></pre>
+<span class="hljs-comment">// spot the differences (2):</span>
+<span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;</span> m3;
+m3.emplace(piecewise_construct, forward_as_tuple(<span class="hljs-string">"pippo"</span>), forward_as_tuple(<span class="hljs-number">5</span>, <span class="hljs-string">'A'</span>));
+<span class="hljs-built_in">cout</span> &lt;&lt; m3[<span class="hljs-string">"pippo"</span>] &lt;&lt; <span class="hljs-string">"\n"</span>;
+m3.try_emplace(<span class="hljs-string">"pluto"</span>, <span class="hljs-number">5</span>, <span class="hljs-string">'A'</span>); <span class="hljs-comment">// cute</span>
+<span class="hljs-built_in">cout</span> &lt;&lt; m3[<span class="hljs-string">"pluto"</span>] &lt;&lt; <span class="hljs-string">"\n\n"</span>;</code></pre>
 
 
 
@@ -476,12 +481,12 @@ extract returns a <strong>node handle</strong> that owns the extracted element, 
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> langs </span><span class="pun">{</span><span class="pln"> </span><span class="pun">{</span><span class="str">"apple"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"obj-c"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"ms"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"c#"</span><span class="pun">}</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
-</span><span class="kwd">auto</span><span class="pln"> elemHandle </span><span class="pun">=</span><span class="pln"> langs</span><span class="pun">.</span><span class="pln">extract</span><span class="pun">(</span><span class="str">"microsoft"</span><span class="pun">);</span><span class="pln">
-assert</span><span class="pun">(</span><span class="pln">langs</span><span class="pun">.</span><span class="pln">count</span><span class="pun">(</span><span class="str">"microsoft"</span><span class="pun">)</span><span class="pln"> </span><span class="pun">==</span><span class="pln"> </span><span class="lit">0</span><span class="pun">);</span><span class="pln"> </span><span class="com">// the node has been physically extracted from the map</span><span class="pln">
-elemHandle</span><span class="pun">.</span><span class="pln">key</span><span class="pun">()</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="str">"Microsoft"</span><span class="pun">;</span><span class="pln">
-langs</span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">move</span><span class="pun">(</span><span class="pln">elemHandle</span><span class="pun">));</span><span class="pln"> </span><span class="com">// move it back</span><span class="pln">
-assert</span><span class="pun">(!</span><span class="pln">elemHandle</span><span class="pun">);</span><span class="pln"> </span><span class="com">// the handle is not valid anymore</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;</span> langs { {<span class="hljs-string">"apple"</span>, <span class="hljs-string">"obj-c"</span>}, {<span class="hljs-string">"ms"</span>, <span class="hljs-string">"c#"</span>} };
+<span class="hljs-keyword">auto</span> elemHandle = langs.extract(<span class="hljs-string">"microsoft"</span>);
+assert(langs.count(<span class="hljs-string">"microsoft"</span>) == <span class="hljs-number">0</span>); <span class="hljs-comment">// the node has been physically extracted from the map</span>
+elemHandle.key() = <span class="hljs-string">"Microsoft"</span>;
+langs.insert(move(elemHandle)); <span class="hljs-comment">// move it back</span>
+assert(!elemHandle); <span class="hljs-comment">// the handle is not valid anymore</span></code></pre>
 
 <p>extract is the only way to change a key of a map element without reallocation:</p>
 
@@ -495,16 +500,16 @@ assert</span><span class="pun">(!</span><span class="pln">elemHandle</span><span
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> oldContacts </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> 
-  </span><span class="pun">{</span><span class="str">"antonio"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"1234"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"franco"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"34412"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"gpad"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"166101010"</span><span class="pun">}</span><span class="pln"> 
-</span><span class="pun">};</span><span class="pln">
-</span><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> newContacts </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> 
-  </span><span class="pun">{</span><span class="str">"marco"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"23123"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"gpad"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"8991234"</span><span class="pun">}</span><span class="pln"> 
-</span><span class="pun">};</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;</span> oldContacts = { 
+  {<span class="hljs-string">"antonio"</span>, <span class="hljs-string">"1234"</span>}, {<span class="hljs-string">"franco"</span>, <span class="hljs-string">"34412"</span>}, {<span class="hljs-string">"gpad"</span>, <span class="hljs-string">"166101010"</span>} 
+};
+<span class="hljs-stl_container"><span class="hljs-built_in">map</span>&lt;<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>&gt;</span> newContacts = { 
+  {<span class="hljs-string">"marco"</span>, <span class="hljs-string">"23123"</span>}, {<span class="hljs-string">"gpad"</span>, <span class="hljs-string">"8991234"</span>} 
+};
 
-</span><span class="com">// nodes are physically extracted from OldContacts, duplicates are skipped</span><span class="pln">
-newContacts</span><span class="pun">.</span><span class="pln">merge</span><span class="pun">(</span><span class="pln">oldContacts</span><span class="pun">);</span><span class="pln"> 
-</span><span class="com">/* newContacts = 
+<span class="hljs-comment">// nodes are physically extracted from OldContacts, duplicates are skipped</span>
+newContacts.merge(oldContacts); 
+<span class="hljs-comment">/* newContacts = 
   {"antonio", "1234"}, 
   {"franco", "34412"}, 
   {"gpad", "8991234"}, 
@@ -523,11 +528,11 @@ newContacts</span><span class="pun">.</span><span class="pln">merge</span><span 
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">optional</span><span class="pun">&lt;</span><span class="typ">Message</span><span class="pun">&gt;</span><span class="pln"> m </span><span class="pun">=</span><span class="pln"> </span><span class="typ">TryReceive</span><span class="pun">(</span><span class="pln">source</span><span class="pun">);</span><span class="pln">
-</span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">m</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
- </span><span class="com">// use *m or m.value()</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs ">optional&lt;Message&gt; m = TryReceive(source);
+<span class="hljs-keyword">if</span> (m)
+{
+ <span class="hljs-comment">// use *m or m.value()</span>
+}</code></pre>
 
 <p>optional works nicely with <strong>chaining</strong>.</p>
 
@@ -543,10 +548,10 @@ newContacts</span><span class="pun">.</span><span class="pln">merge</span><span 
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">any a </span><span class="pun">=</span><span class="pln"> </span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">;</span><span class="pln"> </span><span class="com">// contains a string</span><span class="pln">
-</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> str </span><span class="pun">=</span><span class="pln"> any_cast</span><span class="pun">&lt;</span><span class="kwd">const</span><span class="pln"> string</span><span class="pun">&amp;&gt;(</span><span class="pln">a</span><span class="pun">);</span><span class="pln">
-a </span><span class="pun">=</span><span class="pln"> </span><span class="lit">10</span><span class="pun">;</span><span class="pln"> </span><span class="com">// contains int</span><span class="pln">
-</span><span class="kwd">auto</span><span class="pln"> i </span><span class="pun">=</span><span class="pln"> any_cast</span><span class="str">&lt;int&gt;</span><span class="pun">(</span><span class="pln">a</span><span class="pun">);</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs ">any a = <span class="hljs-string">"hello"</span>s; <span class="hljs-comment">// contains a string</span>
+<span class="hljs-keyword">auto</span>&amp; str = any_cast&lt;<span class="hljs-keyword">const</span> <span class="hljs-built_in">string</span>&amp;&gt;(a);
+a = <span class="hljs-number">10</span>; <span class="hljs-comment">// contains int</span>
+<span class="hljs-keyword">auto</span> i = any_cast&lt;<span class="hljs-keyword">int</span>&gt;(a);</code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/3DMMCjwpagDf3W00">http://melpon.org/wandbox/permlink/3DMMCjwpagDf3W00</a></p>
 
@@ -562,28 +567,28 @@ As with unions, the default-initialized variant holds a value of its first alter
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="typ">Visitor</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-  </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="pln">T</span><span class="pun">...)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln"> 
-  </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="typ">int</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln">
-  </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">double</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln"> 
-  </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> T</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln">
-</span><span class="pun">};</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">struct</span> Visitor {
+  <span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span>... T&gt; <span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span>()(T...) <span class="hljs-keyword">const</span> {} 
+  <span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span>()(<span class="hljs-keyword">int</span>) <span class="hljs-keyword">const</span> {}
+  <span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span>()(<span class="hljs-keyword">int</span>, <span class="hljs-keyword">double</span>) <span class="hljs-keyword">const</span> {} 
+  <span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> T&gt; <span class="hljs-keyword">void</span> <span class="hljs-keyword">operator</span>()(<span class="hljs-built_in">string</span>, T) <span class="hljs-keyword">const</span> {}
+};
 
-variant</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln">string</span><span class="pun">,</span><span class="kwd">double</span><span class="pun">&gt;</span><span class="pln"> i</span><span class="pun">{</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="pun">},</span><span class="pln"> str</span><span class="pun">{</span><span class="pln"> </span><span class="str">"hi"</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+variant&lt;<span class="hljs-keyword">int</span>,<span class="hljs-built_in">string</span>,<span class="hljs-keyword">double</span>&gt; i{ <span class="hljs-number">10</span> }, str{ <span class="hljs-string">"hi"</span> };
 
-</span><span class="com">// valid (or nullptr) - noexcept</span><span class="pln">
-</span><span class="kwd">auto</span><span class="pln"> intPtr </span><span class="pun">=</span><span class="pln"> get_if</span><span class="str">&lt;int&gt;</span><span class="pun">(</span><span class="pln">i</span><span class="pun">);</span><span class="pln"> 
-</span><span class="kwd">auto</span><span class="pln"> nullPtr </span><span class="pun">=</span><span class="pln"> get_if</span><span class="str">&lt;double&gt;</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);</span><span class="pln"> 
-</span><span class="com">// valid (or throws std::bad_variant_access)</span><span class="pln">
-</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> strRef </span><span class="pun">=</span><span class="pln"> get</span><span class="str">&lt;string&gt;</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);</span><span class="pln">
+<span class="hljs-comment">// valid (or nullptr) - noexcept</span>
+<span class="hljs-keyword">auto</span> intPtr = get_if&lt;<span class="hljs-keyword">int</span>&gt;(i); 
+<span class="hljs-keyword">auto</span> nullPtr = get_if&lt;<span class="hljs-keyword">double</span>&gt;(str); 
+<span class="hljs-comment">// valid (or throws std::bad_variant_access)</span>
+<span class="hljs-keyword">auto</span>&amp; strRef = get&lt;<span class="hljs-built_in">string</span>&gt;(str);
 
-</span><span class="typ">Visitor</span><span class="pln"> v</span><span class="pun">;</span><span class="pln">
-visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun">,</span><span class="pln"> i</span><span class="pun">);</span><span class="pln"> </span><span class="com">// on int</span><span class="pln">
-visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">);</span><span class="pln"> </span><span class="com">// on T</span><span class="pln">
+Visitor v;
+visit(v, i); <span class="hljs-comment">// on int</span>
+visit(v, str); <span class="hljs-comment">// on T</span>
 
-</span><span class="com">// multi-visitation</span><span class="pln">
-visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun">,</span><span class="pln"> i</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">);</span><span class="pln"> </span><span class="com">// on T, T</span><span class="pln">
-visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">,</span><span class="pln"> i</span><span class="pun">);</span><span class="pln"> </span><span class="com">// on string, T</span></code></pre>
+<span class="hljs-comment">// multi-visitation</span>
+visit(v, i, str); <span class="hljs-comment">// on T, T</span>
+visit(v, str, i); <span class="hljs-comment">// on string, T</span></code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/sGMv2G23hzMjVK3S">http://melpon.org/wandbox/permlink/sGMv2G23hzMjVK3S</a></p>
 
@@ -607,21 +612,21 @@ visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> f</span><span class="pun">(</span><span class="typ">int</span><span class="pln"> n</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="kwd">switch</span><span class="pln"> </span><span class="pun">(</span><span class="pln">n</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-    </span><span class="kwd">case</span><span class="pln"> </span><span class="lit">1</span><span class="pun">:</span><span class="pln">
-    </span><span class="kwd">case</span><span class="pln"> </span><span class="lit">2</span><span class="pun">:</span><span class="pln">
-      cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"case 1\n"</span><span class="pun">;</span><span class="pln">
-      </span><span class="pun">[[</span><span class="pln">fallthrough</span><span class="pun">]];</span><span class="pln">
-    </span><span class="kwd">case</span><span class="pln"> </span><span class="lit">3</span><span class="pun">:</span><span class="pln"> </span><span class="com">// no warning on fallthrough</span><span class="pln">
-      cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"case 2\n"</span><span class="pun">;</span><span class="pln">
-      </span><span class="com">//[[fallthrough]]; // decomment to silent the warning</span><span class="pln">
-    </span><span class="kwd">case</span><span class="pln"> </span><span class="lit">4</span><span class="pun">:</span><span class="pln"> </span><span class="com">// compiler may warn on fallthrough</span><span class="pln">
-      cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"case 4\n"</span><span class="pun">;</span><span class="pln">
-      </span><span class="com">// [[fallthrough]]; // ill formed, not before a case label</span><span class="pln">
-  </span><span class="pun">}</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">void</span> f(<span class="hljs-keyword">int</span> n)
+{
+  <span class="hljs-keyword">switch</span> (n) {
+    <span class="hljs-keyword">case</span> <span class="hljs-number">1</span>:
+    <span class="hljs-keyword">case</span> <span class="hljs-number">2</span>:
+      <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"case 1\n"</span>;
+      [[fallthrough]];
+    <span class="hljs-keyword">case</span> <span class="hljs-number">3</span>: <span class="hljs-comment">// no warning on fallthrough</span>
+      <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"case 2\n"</span>;
+      <span class="hljs-comment">//[[fallthrough]]; // decomment to silent the warning</span>
+    <span class="hljs-keyword">case</span> <span class="hljs-number">4</span>: <span class="hljs-comment">// compiler may warn on fallthrough</span>
+      <span class="hljs-built_in">cout</span> &lt;&lt; <span class="hljs-string">"case 4\n"</span>;
+      <span class="hljs-comment">// [[fallthrough]]; // ill formed, not before a case label</span>
+  }
+}</code></pre>
 
 <p><strong>[[nodiscard]]</strong></p>
 
@@ -629,23 +634,24 @@ visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="pun">[[</span><span class="pln">nodiscard</span><span class="pun">]]</span><span class="pln"> handle </span><span class="pun">{</span><span class="pln"> </span><span class="typ">int</span><span class="pln"> secret</span><span class="pun">;</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">struct</span> [[nodiscard]] handle { <span class="hljs-keyword">int</span> secret; };
 
-handle </span><span class="typ">LoadModule</span><span class="pun">(</span><span class="pln">string_view name</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-    </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">name </span><span class="pun">==</span><span class="pln"> </span><span class="str">"module1"</span><span class="pun">)</span><span class="pln">
-        </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span><span class="lit">10</span><span class="pun">};</span><span class="pln"> 
-    </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{};</span><span class="pln"> </span><span class="com">// suppose invalid</span><span class="pln">
-</span><span class="pun">}</span><span class="pln">
+handle LoadModule(string_view name)
+{
+    <span class="hljs-keyword">if</span> (name == <span class="hljs-string">"module1"</span>)
+        <span class="hljs-keyword">return</span> {<span class="hljs-number">10</span>}; 
+    <span class="hljs-keyword">return</span> {}; <span class="hljs-comment">// suppose invalid</span>
+}
 
-</span><span class="pun">[[</span><span class="pln">nodiscard</span><span class="pun">]]</span><span class="pln"> </span><span class="typ">int</span><span class="pln"> </span><span class="typ">LastErrorCode</span><span class="pun">()</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-    </span><span class="kwd">return</span><span class="pln"> </span><span class="lit">0</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">}</span><span class="pln">
+[[nodiscard]] <span class="hljs-keyword">int</span> LastErrorCode()
+{
+    <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
 
-</span><span class="typ">LoadModule</span><span class="pun">(</span><span class="str">"module"</span><span class="pun">);</span><span class="pln"> </span><span class="com">// warning encouraged</span><span class="pln">
+LoadModule(<span class="hljs-string">"module"</span>); <span class="hljs-comment">// warning encouraged</span>
 
-</span><span class="typ">LastErrorCode</span><span class="pun">();</span><span class="pln"> </span><span class="com">// warning encouraged</span></code></pre>
+LastErrorCode(); <span class="hljs-comment">// warning encouraged</span>
+</code></pre>
 
 <p><strong>[[maybe_unused]]</strong></p>
 
@@ -653,13 +659,13 @@ handle </span><span class="typ">LoadModule</span><span class="pun">(</span><span
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="com">// v--- the function may be unused</span><span class="pln">
- </span><span class="pun">[[</span><span class="pln">maybe_unused</span><span class="pun">]]</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> unused</span><span class="pun">([[</span><span class="pln">maybe_unused</span><span class="pun">]]</span><span class="pln"> </span><span class="kwd">bool</span><span class="pln"> thing1</span><span class="pun">,</span><span class="pln"> </span><span class="pun">[[</span><span class="pln">maybe_unused</span><span class="pun">]]</span><span class="pln"> </span><span class="kwd">bool</span><span class="pln"> thing2</span><span class="pun">)</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-   </span><span class="pun">[[</span><span class="pln">maybe_unused</span><span class="pun">]]</span><span class="pln"> </span><span class="kwd">bool</span><span class="pln"> b </span><span class="pun">=</span><span class="pln"> thing1 </span><span class="pun">&amp;&amp;</span><span class="pln"> thing2</span><span class="pun">;</span><span class="pln">
-   assert</span><span class="pun">(</span><span class="pln">b</span><span class="pun">);</span><span class="pln"> </span><span class="com">// in release mode, assert is compiled out, and b is unused</span><span class="pln">
-              </span><span class="com">// no warning because it is declared [[maybe_unused]]</span><span class="pln">
-</span><span class="pun">}</span><span class="pln"> </span><span class="com">// parameters thing1 and thing2 are not used, no warning</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-comment">// v--- the function may be unused</span>
+ [[maybe_unused]] <span class="hljs-keyword">void</span> unused([[maybe_unused]] <span class="hljs-keyword">bool</span> thing1, [[maybe_unused]] <span class="hljs-keyword">bool</span> thing2)
+{
+   [[maybe_unused]] <span class="hljs-keyword">bool</span> b = thing1 &amp;&amp; thing2;
+   assert(b); <span class="hljs-comment">// in release mode, assert is compiled out, and b is unused</span>
+              <span class="hljs-comment">// no warning because it is declared [[maybe_unused]]</span>
+} <span class="hljs-comment">// parameters thing1 and thing2 are not used, no warning</span></code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/sIo3MzPDlUxm1OjX">http://melpon.org/wandbox/permlink/sIo3MzPDlUxm1OjX</a></p>
 
@@ -678,18 +684,18 @@ and <a href="http://en.cppreference.com/w/cpp/utility/functional/invoke">http://
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> print</span><span class="pun">(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">);</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">void</span> print(<span class="hljs-built_in">string</span>, <span class="hljs-keyword">int</span>, Foo);
 
-tuple args</span><span class="pun">{</span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">{}};</span><span class="pln">
-std</span><span class="pun">::</span><span class="pln">apply</span><span class="pun">(</span><span class="pln">print</span><span class="pun">,</span><span class="pln"> args</span><span class="pun">);</span></code></pre>
+tuple args{<span class="hljs-string">"hello"</span>s, <span class="hljs-number">10</span>, Foo{}};
+<span class="hljs-built_in">std</span>::apply(print, args);</code></pre>
 
 <p>std::invoke is the “unzipped” version of std::apply: it invokes the callable object with the parameters passed:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> print</span><span class="pun">(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">);</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">void</span> print(<span class="hljs-built_in">string</span>, <span class="hljs-keyword">int</span>, Foo);
 
-std</span><span class="pun">::</span><span class="pln">invoke</span><span class="pun">(</span><span class="pln">print</span><span class="pun">,</span><span class="pln"> </span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">{});</span></code></pre>
+<span class="hljs-built_in">std</span>::invoke(print, <span class="hljs-string">"hello"</span>s, <span class="hljs-number">10</span>, Foo{});</code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ">http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ</a></p>
 
@@ -703,22 +709,24 @@ std</span><span class="pun">::</span><span class="pln">invoke</span><span class=
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> K</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> V</span><span class="pun">&gt;</span><span class="pln">
-</span><span class="kwd">class</span><span class="pln"> </span><span class="typ">MyContainer</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-   </span><span class="typ">vector</span><span class="pun">&lt;</span><span class="pln">K</span><span class="pun">&gt;</span><span class="pln"> keys</span><span class="pun">;</span><span class="pln">
-   </span><span class="typ">vector</span><span class="pun">&lt;</span><span class="pln">V</span><span class="pun">&gt;</span><span class="pln"> values</span><span class="pun">;</span><span class="pln">
-</span><span class="kwd">public</span><span class="pun">:</span><span class="pln">
-   </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">KeyTuple</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">ValueTuple</span><span class="pun">&gt;</span><span class="pln">
-   </span><span class="kwd">void</span><span class="pln"> emplace</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="typ">piecewise_construct_t</span><span class="pun">,</span><span class="pln"> </span><span class="typ">KeyTuple</span><span class="pun">&amp;&amp;</span><span class="pln"> kt</span><span class="pun">,</span><span class="pln"> </span><span class="typ">ValueTuple</span><span class="pun">&amp;&amp;</span><span class="pln"> vt</span><span class="pun">)</span><span class="pln">
-   </span><span class="pun">{</span><span class="pln">
-     </span><span class="com">// ... some complex logic</span><span class="pln">
-     keys</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">make_from_tuple</span><span class="pun">&lt;</span><span class="pln">K</span><span class="pun">&gt;(</span><span class="pln">kt</span><span class="pun">));</span><span class="pln">
-     values</span><span class="pun">.</span><span class="pln">push_back</span><span class="pun">(</span><span class="pln">make_from_tuple</span><span class="pun">&lt;</span><span class="pln">V</span><span class="pun">&gt;(</span><span class="pln">vt</span><span class="pun">));</span><span class="pln">
-   </span><span class="pun">}</span><span class="pln">
-</span><span class="pun">};</span></code></pre>
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> K, <span class="hljs-keyword">typename</span> V&gt;
+<span class="hljs-keyword">class</span> MyContainer
+{
+   <span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;K&gt;</span> keys;
+   <span class="hljs-stl_container"><span class="hljs-built_in">vector</span>&lt;V&gt;</span> values;
+<span class="hljs-keyword">public</span>:
+   <span class="hljs-keyword">template</span>&lt;<span class="hljs-keyword">typename</span> KeyTuple, <span class="hljs-keyword">typename</span> ValueTuple&gt;
+   <span class="hljs-keyword">void</span> emplace(<span class="hljs-built_in">std</span>::piecewise_construct_t, KeyTuple&amp;&amp; kt, ValueTuple&amp;&amp; vt)
+   {
+     <span class="hljs-comment">// ... some complex logic</span>
+     keys.push_back(make_from_tuple&lt;K&gt;(kt));
+     values.push_back(make_from_tuple&lt;V&gt;(vt));
+   }
+};</code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o">http://melpon.org/wandbox/permlink/OAeVL7N8NwAWlN5o</a></p>
+
+
 
 <h3 id="if-constexpr">if constexpr</h3>
 
@@ -729,31 +737,31 @@ The return statements in a discarded statement do not participate in function re
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">enum</span><span class="pln"> </span><span class="kwd">class</span><span class="pln"> OS </span><span class="pun">{</span><span class="pln"> </span><span class="typ">Linux</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Mac</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Windows</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+<pre class="prettyprint"><code class="language-cpp hljs "><span class="hljs-keyword">enum</span> <span class="hljs-keyword">class</span> OS { Linux, Mac, Windows };
 
-</span><span class="com">#ifdef</span><span class="pln"> __linux__
-  </span><span class="kwd">constexpr</span><span class="pln"> OS curr_os </span><span class="pun">=</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Linux</span><span class="pun">;</span><span class="pln">
-</span><span class="com">#elif</span><span class="pln"> __APPLE__
-  </span><span class="kwd">constexpr</span><span class="pln"> OS curr_os </span><span class="pun">=</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Mac</span><span class="pun">;</span><span class="pln">
-</span><span class="com">#elif</span><span class="pln"> __WIN32
-  </span><span class="kwd">constexpr</span><span class="pln"> OS curr_os </span><span class="pun">=</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Windows</span><span class="pun">;</span><span class="pln">
-</span><span class="com">#endif</span><span class="pln">
+<span class="hljs-preprocessor">#ifdef __linux__</span>
+  <span class="hljs-keyword">constexpr</span> OS curr_os = OS::Linux;
+<span class="hljs-preprocessor">#elif __APPLE__</span>
+  <span class="hljs-keyword">constexpr</span> OS curr_os = OS::Mac;
+<span class="hljs-preprocessor">#elif __WIN32</span>
+  <span class="hljs-keyword">constexpr</span> OS curr_os = OS::Windows;
+<span class="hljs-preprocessor">#endif</span>
 
-</span><span class="kwd">void</span><span class="pln"> do_something</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-     </span><span class="com">//do something general</span><span class="pln">
+<span class="hljs-keyword">void</span> do_something() {
+     <span class="hljs-comment">//do something general</span>
 
-     </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">constexpr</span><span class="pln"> </span><span class="pun">(</span><span class="pln">curr_os </span><span class="pun">==</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Linux</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-         </span><span class="com">//do something Linuxy</span><span class="pln">
-     </span><span class="pun">}</span><span class="pln">
-     </span><span class="kwd">else</span><span class="pln"> </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">constexpr</span><span class="pln"> </span><span class="pun">(</span><span class="pln">curr_os </span><span class="pun">==</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Mac</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-         </span><span class="com">//do something Appley</span><span class="pln">
-     </span><span class="pun">}</span><span class="pln">
-     </span><span class="kwd">else</span><span class="pln"> </span><span class="kwd">if</span><span class="pln"> </span><span class="kwd">constexpr</span><span class="pln"> </span><span class="pun">(</span><span class="pln">curr_os </span><span class="pun">==</span><span class="pln"> OS</span><span class="pun">::</span><span class="typ">Windows</span><span class="pun">)</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-         </span><span class="com">//do something Windowsy</span><span class="pln">
-     </span><span class="pun">}</span><span class="pln">
+     <span class="hljs-keyword">if</span> <span class="hljs-keyword">constexpr</span> (curr_os == OS::Linux) {
+         <span class="hljs-comment">//do something Linuxy</span>
+     }
+     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">constexpr</span> (curr_os == OS::Mac) {
+         <span class="hljs-comment">//do something Appley</span>
+     }
+     <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> <span class="hljs-keyword">constexpr</span> (curr_os == OS::Windows) {
+         <span class="hljs-comment">//do something Windowsy</span>
+     }
 
-     </span><span class="com">//do something general</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
+     <span class="hljs-comment">//do something general</span>
+}</code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/g1bceK9eVAMgWvBq">http://melpon.org/wandbox/permlink/g1bceK9eVAMgWvBq</a></p></div></body>
 </html>
