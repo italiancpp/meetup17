@@ -2,7 +2,7 @@
 
 Information and Examples to experience C++17.
 
-[Last update: Feb 17, 2017)
+[Last update: Feb 21, 2017)
 
 This document has been written by [Marco Arena](http://marcoarena.wordpress.com) for some [Italian C++ Community](http://italiancpp.org) Meetups.
 
@@ -319,7 +319,7 @@ Does it recall you anything?
 
 Yes, **trim**. Without creating a new string instance.
 
-Play: http://melpon.org/wandbox/permlink/uITUQzX4ytMIG7n6
+Play: http://melpon.org/wandbox/permlink/D67pp9xu1F4VVhJx
 
 Some string_view pitfalls: https://marcoarena.wordpress.com/2017/01/03/string_view-odi-et-amo/
 
