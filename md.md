@@ -2,9 +2,9 @@
 
 Information and Examples to experience C++17.
 
-[Last update: Feb 21, 2017)
+[Last update: Feb 28, 2017)
 
-This document has been written by [Marco Arena](http://marcoarena.wordpress.com) for some [Italian C++ Community](http://italiancpp.org) Meetups.
+This document has been written by [Marco Arena](http://marcoarena.wordpress.com).
 
 [toc]
 
@@ -15,7 +15,7 @@ This document has been written by [Marco Arena](http://marcoarena.wordpress.com)
 * It's a major release of the language and will act as a springboard for C++20
 * Compiler support: http://en.cppreference.com/w/cpp/compiler_support
 * **GCC** is language-complete: [status](https://gcc.gnu.org/projects/cxx-status.html#cxx11)
-* **Clang** is ~language-complete: [status](https://clang.llvm.org/cxx_status.html)
+* **Clang** is language-complete: [status](https://clang.llvm.org/cxx_status.html)
 * **Visual C++**: [news](https://docs.microsoft.com/en-us/cpp/cpp-conformance-improvements-2017)
 * Another great presentation: https://jfbastien.github.io/what-is-cpp17/#/8/1
 * Another great cheatsheet: https://github.com/AnthonyCalandra/modern-cpp-features#structured-bindings
@@ -30,7 +30,7 @@ Visual C++: http://webcompiler.cloudapp.net/
 
 ### Structured bindings
 
-Paper: http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0217r2.html
+Documentation: http://en.cppreference.com/w/cpp/language/declarations#Decomposition_declaration
 
 Disappointment from the past:
 ```cpp
@@ -57,17 +57,19 @@ tie(r, g, b, a) = MakeRGBa();
 ```
 Types that are **Destructurable** can benefit of *Structured bindings*:
 
+```cpp
+auto [r, g, b, a] = MakeRGBa();
+```
+
+A type is **destructurable** if:
+
 * Either all non-static data members:
     * Must be public
     * Must be direct members of the type or members of the same public base class of the type
     * Cannot be anonymous unions
-* Or the type has:
+* Or, it has:
     * An obj.get<>() method or an ADL-able get<>(obj) overload
     * Specializations of std::tuple_size<> and std::tuple_element<>
-
-```cpp
-auto [r, g, b, a] = MakeRGBa();
-```
 
 Let's use structured bindings to beautifully iterate on a std::map:
 
@@ -79,31 +81,57 @@ for (auto& [name, age] : nameToAge)
 }
 ```
 
-Note: Structured binding **does not copy values**, rather it references them:
+Structured binding is kind of syntactic sugar. This one:
 
 ```cpp
-struct Foo
-{
-  ~Foo() { cout << "dtor\n"; }
-  int i, j;
-};
+tuple<int, int, string> make();
 
-Foo make()
-{
-  return { 1, 3 };
-}
+auto [a, b, c] = make();
+```
 
-{
-  auto [a, b] = make();
-  cout << a << ", " << b << "\n";
-}
-```
-Will print:
-```
-1, 3
-dtor
+it's equivalent to:
 
+```cpp
+tuple<int, int, string> make();
+auto __tmp = make();
+auto& a = get<0>(__tmp);
+auto& b = get<1>(__tmp);
+auto& c = get<2>(__tmp);
 ```
+
+At the same time:
+
+```cpp
+array<int, 2> arr = {1, 2};
+
+auto [a, b] = arr;
+```
+
+it's equivalent to:
+
+```cpp
+auto __tmp = arr;
+auto& a = __tmp [0]; // get<0>(__tmp )
+auto& b = __tmp [1]; // get<1>(__tmp )
+```
+
+Instead, this one:
+
+```cpp
+array<int, 2> arr = {1, 2};
+
+auto& [a, b] = arr;
+```
+
+does not introduce any temporary:
+
+```cpp
+auto& a = arr[0]; // get<0>(arr)
+auto& b = arr[1]; // get<1>(arr)
+```
+
+Structured bindings **does not copy to values**, rather it references them.
+
 
 Play: http://melpon.org/wandbox/permlink/DxWo0TiMeWG6TFSo
 
@@ -170,6 +198,20 @@ if (auto it = m.find("B"); it!=end(m))
 }
 ```
 
+This syntax - apart from being more compact - is useful to prevent subtle bugs like the following:
+
+```cpp
+map<string, int> m = { {"A", 1}, {"B", 2 };
+auto it = m.find("B");
+if (it!=end(m))
+{
+  // ...
+}
+// use *it anyway...
+```
+
+Instead, putting **it** into the same scope of the selection will make impossible to dereference such iterator when the if fails.
+
 Play: http://melpon.org/wandbox/permlink/ptdZG2VZAGs4EGEb
 
 ### Folding expressions
@@ -233,11 +275,11 @@ vector<string> split(const string& str, const char* delims)
 }
 ```
 
-Basically, I don't want to reallocate strings that are already part of the string that I'm splitting.
-Can I use offsets?
+Basically, I pay a new string for each token. Actually, each token is already part of the string that I'm splitting. Some offsets to the original string will suffice...
 
+Can I do better?
 
-I can do better: I can use string_views:
+Sure, I can employ**string_view**:
 ```cpp
 vector<string_view> split(string_view str, const char* delims)
 {
@@ -260,7 +302,7 @@ vector<string_view> split(string_view str, const char* delims)
 }
 ```
 
-Or, more generic:
+Or, more generically:
 
 ```cpp
 template<typename Action>
@@ -282,15 +324,16 @@ void on_each_token(string_view str, const char* delims, Action action)
 }
 ```
 
-string_view is an object that can refer to a constant contiguous sequence of char-like objects with the first element of the sequence at position zero.
-I repeat: string_view is a reference. This means: it does not participate in the ownership of the sequence.
+**string_view** is an object that can refer to a constant contiguous sequence of char-like objects with the first element of the sequence at position zero.
+
+**string_view is a reference**. This means: it does not participate in the ownership of the sequence.
 
 Typical implementations:
 
 * const char pointer and a size;
 * couple of pointers;
 
-You can imagine string_view as a smart const char* which provides any const member function of std::string as well as a few handy utilities to reduce its span. You cannot enlarge a string_view until you reassign it.
+You can imagine string_view as a **smart const char*** which provides any const member function of std::string as well as a few handy utilities to reduce its span. You cannot enlarge a string_view until you reassign it.
 
 First of all, string_view is an **adapter**: different string types cam be adapted into a std::string-like container through string_view:
 ```cpp
@@ -389,9 +432,9 @@ In either case, no elements are copied or moved, only the internal pointers of t
 extract returns a **node handle** that owns the extracted element, or *empty* **node handle** in case the element is not found by key.
 ```cpp
 map<string, string> langs { {"apple", "obj-c"}, {"ms", "c#"} };
-auto elemHandle = langs.extract("microsoft");
-assert(langs.count("microsoft") == 0); // the node has been physically extracted from the map
-elemHandle.key() = "Microsoft";
+auto elemHandle = langs.extract("ms");
+assert(langs.count("ms") == 0); // the node has been physically extracted from the map
+elemHandle.key() = "microsoft";
 langs.insert(move(elemHandle)); // move it back
 assert(!elemHandle); // the handle is not valid anymore
 ```
@@ -438,7 +481,24 @@ if (m)
 }
 ```
 
-optional works nicely with **chaining**.
+optional works nicely with **chaining**. Just defining such an operator:
+
+```cpp
+template<typename T, typename F>
+auto operator||(optional<T> opt, F f)
+{
+    return opt ? f(opt.value()) : nullopt;
+}
+```
+
+(that's basically: **writing the if in a single place**) you can chain computations easily:
+
+```cpp
+auto value = ( 	parse("8.5+(21+x)*5") 
+			 || optimize
+			 || evaluate
+			 ).value_or(std::numeric_limits<double>::quiet_NaN());
+```
 
 Play: http://melpon.org/wandbox/permlink/Ky3M1j2BJe5sCLc3
 
@@ -458,25 +518,24 @@ Play: http://melpon.org/wandbox/permlink/3DMMCjwpagDf3W00
 
 ### variant
 
-Represents a type-safe union. An instance of std::variant at any given time either holds a value of one of its alternative types, or it holds no value.
+Represents a **type-safe union**. An instance of **std::variant** at any given time either holds a value of one of its alternative types, or it holds no value.
 
-As with unions, if a variant holds a value of some object type T, the object representation of T is allocated directly within the object representation of the variant itself. Variant is not allowed to allocate additional (dynamic) memory.
+As with unions, if a variant holds a value of some object type T, the object representation of T is allocated directly within the object representation of the variant itself. **Variant is not allowed to allocate additional (dynamic) memory**.
 A variant is not permitted to hold references, arrays, or the type void.
-As with unions, the default-initialized variant holds a value of its first alternative, unless that alternative is not default-constructible (in which case default constructor won't compile: the helper class std::monostate can be used to make such variants default-constructible).
+As with unions, the default-initialized variant holds a value of its first alternative, unless that alternative is not default-constructible (in which case default constructor won't compile: the helper class *std::monostate* can be used to make such variants default-constructible).
 
 ```cpp
 struct Visitor {
-  template<typename... T> void operator()(T...) const {} 
+  template<typename... T> void operator()(T...) const {} // catch-all
   void operator()(int) const {}
-  void operator()(int, double) const {} 
   template<typename T> void operator()(string, T) const {}
 };
 
 variant<int,string,double> i{ 10 }, str{ "hi" };
 
 // valid (or nullptr) - noexcept
-auto intPtr = get_if<int>(i); 
-auto nullPtr = get_if<double>(str); 
+auto intPtr = get_if<int>(&i); 
+auto nullPtr = get_if<double>(&str); 
 // valid (or throws std::bad_variant_access)
 auto& strRef = get<string>(str);
 
@@ -495,11 +554,11 @@ Play: http://melpon.org/wandbox/permlink/sGMv2G23hzMjVK3S
 
 Documentation: http://en.cppreference.com/w/cpp/language/attributes
 
-Attributes provide the unified standard syntax for implementation-defined language extensions. An attribute can be used almost everywhere in the C++ program, and can be applied to almost everything: to types, to variables, to functions, to names, to code blocks, to entire translation units, although each particular attribute is only valid where it is permitted by the implementation.
+Attributes provide the **unified standard syntax for implementation-defined language extensions**. An attribute can be used almost everywhere in the C++ program, and can be applied to almost everything: to types, to variables, to functions, to names, to code blocks, to entire translation units, although each particular attribute is only valid where it is permitted by the implementation.
 
-Besides the standard attributes listed below, implementations may support arbitrary non-standard attributes with implementation-defined behavior. That's possibile thanks to C++17 that introduces the following rule: "attributes unknown to an implementation are ignored without causing an error".
+Besides the standard attributes, implementations may support arbitrary non-standard attributes with implementation-defined behavior. That's possibile thanks to **C++17** that **introduces the following rule**: *attributes unknown to an implementation are ignored without causing an error*.
 
-Modern library like the [GSL](https://github.com/Microsoft/GSL) already started using custom attributes, like [[gsl::suppress]].
+Modern libraries like the [GSL](https://github.com/Microsoft/GSL) already started using custom attributes, like [[gsl::suppress]].
 
 New C++17 standard attributes:
 
@@ -565,19 +624,46 @@ Play: http://melpon.org/wandbox/permlink/sIo3MzPDlUxm1OjX
 
 ## Generic Programming ##
 
+### nested namespace declarations
+
+Documentation: http://en.cppreference.com/w/cpp/language/namespace
+
+Not really a "generic programming" feature, more a language feature. It's listed here because, it's more likely that this feature will be massively employed by library writers.
+
+From C++17 you can write:
+
+```cpp
+namespace std::experimental
+{
+   // ...
+}
+```
+
+Instead of:
+
+```cpp
+namespace std
+{
+	namespace experimental
+	{
+	   // ...
+	}
+}
+```
+
 ### apply & invoke
 
 Documentation: http://en.cppreference.com/w/cpp/utility/apply 
 and http://en.cppreference.com/w/cpp/utility/functional/invoke
 
-std::apply invokes a callable object by unpacking a tuple into its arguments:
+**std::apply** invokes a callable object by unpacking a tuple into its arguments:
 ```cpp
 void print(string, int, Foo);
 
 tuple args{"hello"s, 10, Foo{}};
 std::apply(print, args);
 ```
-std::invoke is the "unzipped" version of std::apply: it invokes the callable object with the parameters passed:
+**std::invoke** is the "destructured" counterpart: it invokes the callable object with the parameters passed unrolled:
 ```cpp
 void print(string, int, Foo);
 
