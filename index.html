@@ -11,9 +11,9 @@
 
 <p>Information and Examples to experience C++17.</p>
 
-<p>[Last update: Feb 21, 2017)</p>
+<p>[Last update: Feb 28, 2017)</p>
 
-<p>This document has been written by <a href="http://marcoarena.wordpress.com">Marco Arena</a> for some <a href="http://italiancpp.org">Italian C++ Community</a> Meetups.</p>
+<p>This document has been written by <a href="http://marcoarena.wordpress.com">Marco Arena</a>.</p>
 
 <p><div class="toc">
 <ul>
@@ -46,6 +46,7 @@
 </li>
 <li><a href="#attributes">Attributes</a></li>
 <li><a href="#generic-programming">Generic Programming</a><ul>
+<li><a href="#nested-namespace-declarations">nested namespace declarations</a></li>
 <li><a href="#apply-invoke">apply &amp; invoke</a></li>
 <li><a href="#makefromtuple">make_from_tuple</a></li>
 <li><a href="#if-constexpr">if constexpr</a></li>
@@ -57,8 +58,6 @@
 </div>
 </p>
 
-
-
 <h3 id="introduction">Introduction</h3>
 
 <ul>
@@ -67,13 +66,11 @@
 <li>It’s a major release of the language and will act as a springboard for C++20</li>
 <li>Compiler support: <a href="http://en.cppreference.com/w/cpp/compiler_support">http://en.cppreference.com/w/cpp/compiler_support</a></li>
 <li><strong>GCC</strong> is language-complete: <a href="https://gcc.gnu.org/projects/cxx-status.html#cxx11">status</a></li>
-<li><strong>Clang</strong> is ~language-complete: <a href="https://clang.llvm.org/cxx_status.html">status</a></li>
+<li><strong>Clang</strong> is language-complete: <a href="https://clang.llvm.org/cxx_status.html">status</a></li>
 <li><strong>Visual C++</strong>: <a href="https://docs.microsoft.com/en-us/cpp/cpp-conformance-improvements-2017">news</a></li>
 <li>Another great presentation: <a href="https://jfbastien.github.io/what-is-cpp17/#/8/1">https://jfbastien.github.io/what-is-cpp17/#/8/1</a></li>
 <li>Another great cheatsheet: <a href="https://github.com/AnthonyCalandra/modern-cpp-features#structured-bindings">https://github.com/AnthonyCalandra/modern-cpp-features#structured-bindings</a></li>
 </ul>
-
-
 
 <h3 id="online-compilers-to-play-with-c17">Online compilers to play with C++17</h3>
 
@@ -89,11 +86,9 @@
 
 <h3 id="structured-bindings">Structured bindings</h3>
 
-<p>Paper: <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0217r2.html">http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2016/p0217r2.html</a></p>
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/declarations#Decomposition_declaration">http://en.cppreference.com/w/cpp/language/declarations#Decomposition_declaration</a></p>
 
 <p>Disappointment from the past:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">tuple</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">float</span><span class="pun">&gt;</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">...</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
 
@@ -118,23 +113,23 @@ tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">
 
 <p>Types that are <strong>Destructurable</strong> can benefit of <em>Structured bindings</em>:</p>
 
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> a</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span></code></pre>
+
+<p>A type is <strong>destructurable</strong> if:</p>
+
 <ul>
 <li>Either all non-static data members: <br>
 <ul><li>Must be public</li>
 <li>Must be direct members of the type or members of the same public base class of the type</li>
 <li>Cannot be anonymous unions</li></ul></li>
-<li>Or the type has: <br>
+<li>Or, it has: <br>
 <ul><li>An obj.get&lt;&gt;() method or an ADL-able get&lt;&gt;(obj) overload</li>
 <li>Specializations of std::tuple_size&lt;&gt; and std::tuple_element&lt;&gt;</li></ul></li>
 </ul>
 
-
-
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">r</span><span class="pun">,</span><span class="pln"> g</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> a</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="typ">MakeRGBa</span><span class="pun">();</span></code></pre>
-
 <p>Let’s use structured bindings to beautifully iterate on a std::map:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">&gt;</span><span class="pln"> nameToAge</span><span class="pun">;</span><span class="pln">
 </span><span class="kwd">for</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> </span><span class="pun">[</span><span class="pln">name</span><span class="pun">,</span><span class="pln"> age</span><span class="pun">]</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> nameToAge</span><span class="pun">)</span><span class="pln">
@@ -142,36 +137,50 @@ tie</span><span class="pun">(</span><span class="pln">r</span><span class="pun">
    cout </span><span class="pun">&lt;&lt;</span><span class="pln"> name </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">" has "</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> age </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">" years\n"</span><span class="pun">;</span><span class="pln">
 </span><span class="pun">}</span></code></pre>
 
-<p>Note: Structured binding <strong>does not copy values</strong>, rather it references them:</p>
+<p>Structured binding is kind of syntactic sugar. This one:</p>
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">tuple</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> make</span><span class="pun">();</span><span class="pln">
+
+</span><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">a</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">,</span><span class="pln"> c</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> make</span><span class="pun">();</span></code></pre>
+
+<p>it’s equivalent to:</p>
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">tuple</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> make</span><span class="pun">();</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> __tmp </span><span class="pun">=</span><span class="pln"> make</span><span class="pun">();</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> a </span><span class="pun">=</span><span class="pln"> get</span><span class="pun">&lt;</span><span class="lit">0</span><span class="pun">&gt;(</span><span class="pln">__tmp</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> b </span><span class="pun">=</span><span class="pln"> get</span><span class="pun">&lt;</span><span class="lit">1</span><span class="pun">&gt;(</span><span class="pln">__tmp</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> c </span><span class="pun">=</span><span class="pln"> get</span><span class="pun">&lt;</span><span class="lit">2</span><span class="pun">&gt;(</span><span class="pln">__tmp</span><span class="pun">);</span></code></pre>
+
+<p>At the same time:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="typ">Foo</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="pun">~</span><span class="typ">Foo</span><span class="pun">()</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> cout </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"dtor\n"</span><span class="pun">;</span><span class="pln"> </span><span class="pun">}</span><span class="pln">
-  </span><span class="typ">int</span><span class="pln"> i</span><span class="pun">,</span><span class="pln"> j</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">};</span><span class="pln">
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">array</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pun">&gt;</span><span class="pln"> arr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pun">};</span><span class="pln">
 
-</span><span class="typ">Foo</span><span class="pln"> make</span><span class="pun">()</span><span class="pln">
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="kwd">return</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
-</span><span class="pun">}</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">a</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> arr</span><span class="pun">;</span></code></pre>
 
-</span><span class="pun">{</span><span class="pln">
-  </span><span class="kwd">auto</span><span class="pln"> </span><span class="pun">[</span><span class="pln">a</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> make</span><span class="pun">();</span><span class="pln">
-  cout </span><span class="pun">&lt;&lt;</span><span class="pln"> a </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">", "</span><span class="pln"> </span><span class="pun">&lt;&lt;</span><span class="pln"> b </span><span class="pun">&lt;&lt;</span><span class="pln"> </span><span class="str">"\n"</span><span class="pun">;</span><span class="pln">
-</span><span class="pun">}</span></code></pre>
-
-<p>Will print:</p>
+<p>it’s equivalent to:</p>
 
 
 
-<pre class="prettyprint prettyprinted"><code><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">3</span><span class="pln">
-dtor</span></code></pre>
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">auto</span><span class="pln"> __tmp </span><span class="pun">=</span><span class="pln"> arr</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> a </span><span class="pun">=</span><span class="pln"> __tmp </span><span class="pun">[</span><span class="lit">0</span><span class="pun">];</span><span class="pln"> </span><span class="com">// get&lt;0&gt;(__tmp )</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> b </span><span class="pun">=</span><span class="pln"> __tmp </span><span class="pun">[</span><span class="lit">1</span><span class="pun">];</span><span class="pln"> </span><span class="com">// get&lt;1&gt;(__tmp )</span></code></pre>
+
+<p>Instead, this one:</p>
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="pln">array</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pun">&gt;</span><span class="pln"> arr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="lit">1</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pun">};</span><span class="pln">
+
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> </span><span class="pun">[</span><span class="pln">a</span><span class="pun">,</span><span class="pln"> b</span><span class="pun">]</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> arr</span><span class="pun">;</span></code></pre>
+
+<p>does not introduce any temporary:</p>
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> a </span><span class="pun">=</span><span class="pln"> arr</span><span class="pun">[</span><span class="lit">0</span><span class="pun">];</span><span class="pln"> </span><span class="com">// get&lt;0&gt;(arr)</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> b </span><span class="pun">=</span><span class="pln"> arr</span><span class="pun">[</span><span class="lit">1</span><span class="pun">];</span><span class="pln"> </span><span class="com">// get&lt;1&gt;(arr)</span></code></pre>
+
+<p>Structured bindings <strong>does not copy to values</strong>, rather it references them.</p>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/DxWo0TiMeWG6TFSo">http://melpon.org/wandbox/permlink/DxWo0TiMeWG6TFSo</a></p>
-
-
 
 <h3 id="template-argument-deduction-for-class-templates">Template argument deduction for class templates</h3>
 
@@ -232,17 +241,27 @@ dtor</span></code></pre>
 
 <p>New versions of the if and switch statements which simplify common code patterns and help users keep scopes tight:</p>
 
-
-
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">&gt;</span><span class="pln"> m </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">{</span><span class="str">"A"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"B"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
 </span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="kwd">auto</span><span class="pln"> it </span><span class="pun">=</span><span class="pln"> m</span><span class="pun">.</span><span class="pln">find</span><span class="pun">(</span><span class="str">"B"</span><span class="pun">);</span><span class="pln"> it</span><span class="pun">!=</span><span class="pln">end</span><span class="pun">(</span><span class="pln">m</span><span class="pun">))</span><span class="pln">
 </span><span class="pun">{</span><span class="pln">
   </span><span class="com">// ...</span><span class="pln">
 </span><span class="pun">}</span></code></pre>
 
+<p>This syntax - apart from being more compact - is useful to prevent subtle bugs like the following:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">&gt;</span><span class="pln"> m </span><span class="pun">=</span><span class="pln"> </span><span class="pun">{</span><span class="pln"> </span><span class="pun">{</span><span class="str">"A"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">1</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"B"</span><span class="pun">,</span><span class="pln"> </span><span class="lit">2</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> it </span><span class="pun">=</span><span class="pln"> m</span><span class="pun">.</span><span class="pln">find</span><span class="pun">(</span><span class="str">"B"</span><span class="pun">);</span><span class="pln">
+</span><span class="kwd">if</span><span class="pln"> </span><span class="pun">(</span><span class="pln">it</span><span class="pun">!=</span><span class="pln">end</span><span class="pun">(</span><span class="pln">m</span><span class="pun">))</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+  </span><span class="com">// ...</span><span class="pln">
+</span><span class="pun">}</span><span class="pln">
+</span><span class="com">// use *it anyway...</span></code></pre>
+
+<p>Instead, putting <strong>it</strong> into the same scope of the selection will make impossible to dereference such iterator when the if fails.</p>
+
 <p>Play: <a href="http://melpon.org/wandbox/permlink/ptdZG2VZAGs4EGEb">http://melpon.org/wandbox/permlink/ptdZG2VZAGs4EGEb</a></p>
-
-
 
 <h3 id="folding-expressions">Folding expressions</h3>
 
@@ -310,12 +329,11 @@ The good news is that we already have a long experience with such additions.</p>
   </span><span class="kwd">return</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
 </span><span class="pun">}</span></code></pre>
 
-<p>Basically, I don’t want to reallocate strings that are already part of the string that I’m splitting. <br>
-Can I use offsets?</p>
+<p>Basically, I pay a new string for each token. Actually, each token is already part of the string that I’m splitting. Some offsets to the original string will suffice…</p>
 
-<p>I can do better: I can use string_views:</p>
+<p>Can I do better?</p>
 
-
+<p>Sure, I can employ**string_view**:</p>
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">vector</span><span class="str">&lt;string_view&gt;</span><span class="pln"> split</span><span class="pun">(</span><span class="pln">string_view str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">)</span><span class="pln">
 </span><span class="pun">{</span><span class="pln">
@@ -337,9 +355,7 @@ Can I use offsets?</p>
    </span><span class="kwd">return</span><span class="pln"> ret</span><span class="pun">;</span><span class="pln">
 </span><span class="pun">}</span></code></pre>
 
-<p>Or, more generic:</p>
-
-
+<p>Or, more generically:</p>
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> </span><span class="typ">Action</span><span class="pun">&gt;</span><span class="pln">
 </span><span class="kwd">void</span><span class="pln"> on_each_token</span><span class="pun">(</span><span class="pln">string_view str</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="kwd">char</span><span class="pun">*</span><span class="pln"> delims</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Action</span><span class="pln"> action</span><span class="pun">)</span><span class="pln">
@@ -359,8 +375,9 @@ Can I use offsets?</p>
       action</span><span class="pun">(</span><span class="pln">str</span><span class="pun">.</span><span class="pln">substr</span><span class="pun">(</span><span class="pln">start</span><span class="pun">,</span><span class="pln"> str</span><span class="pun">.</span><span class="pln">length</span><span class="pun">()</span><span class="pln"> </span><span class="pun">-</span><span class="pln"> start</span><span class="pun">));</span><span class="pln">
 </span><span class="pun">}</span></code></pre>
 
-<p>string_view is an object that can refer to a constant contiguous sequence of char-like objects with the first element of the sequence at position zero. <br>
-I repeat: string_view is a reference. This means: it does not participate in the ownership of the sequence.</p>
+<p><strong>string_view</strong> is an object that can refer to a constant contiguous sequence of char-like objects with the first element of the sequence at position zero.</p>
+
+<p><strong>string_view is a reference</strong>. This means: it does not participate in the ownership of the sequence.</p>
 
 <p>Typical implementations:</p>
 
@@ -369,11 +386,9 @@ I repeat: string_view is a reference. This means: it does not participate in the
 <li>couple of pointers;</li>
 </ul>
 
-<p>You can imagine string_view as a smart const char* which provides any const member function of std::string as well as a few handy utilities to reduce its span. You cannot enlarge a string_view until you reassign it.</p>
+<p>You can imagine string_view as a <strong>smart const char*</strong> which provides any const member function of std::string as well as a few handy utilities to reduce its span. You cannot enlarge a string_view until you reassign it.</p>
 
 <p>First of all, string_view is an <strong>adapter</strong>: different string types cam be adapted into a std::string-like container through string_view:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">CString</span><span class="pln"> cstr </span><span class="pun">=</span><span class="pln"> </span><span class="pun">...</span><span class="pln">
 string_view cstrv </span><span class="pun">{</span><span class="pln">cstr</span><span class="pun">.</span><span class="typ">GetString</span><span class="pun">()};</span><span class="pln">
@@ -402,6 +417,8 @@ sv</span><span class="pun">.</span><span class="pln">remove_suffix</span><span c
 <p>Play: <a href="http://melpon.org/wandbox/permlink/D67pp9xu1F4VVhJx">http://melpon.org/wandbox/permlink/D67pp9xu1F4VVhJx</a></p>
 
 <p>Some string_view pitfalls: <a href="https://marcoarena.wordpress.com/2017/01/03/string_view-odi-et-amo/">https://marcoarena.wordpress.com/2017/01/03/string_view-odi-et-amo/</a></p>
+
+
 
 <h3 id="associative-containers-additions">associative containers additions</h3>
 
@@ -479,15 +496,13 @@ extract returns a <strong>node handle</strong> that owns the extracted element, 
 
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="typ">map</span><span class="pun">&lt;</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> string</span><span class="pun">&gt;</span><span class="pln"> langs </span><span class="pun">{</span><span class="pln"> </span><span class="pun">{</span><span class="str">"apple"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"obj-c"</span><span class="pun">},</span><span class="pln"> </span><span class="pun">{</span><span class="str">"ms"</span><span class="pun">,</span><span class="pln"> </span><span class="str">"c#"</span><span class="pun">}</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
-</span><span class="kwd">auto</span><span class="pln"> elemHandle </span><span class="pun">=</span><span class="pln"> langs</span><span class="pun">.</span><span class="pln">extract</span><span class="pun">(</span><span class="str">"microsoft"</span><span class="pun">);</span><span class="pln">
-assert</span><span class="pun">(</span><span class="pln">langs</span><span class="pun">.</span><span class="pln">count</span><span class="pun">(</span><span class="str">"microsoft"</span><span class="pun">)</span><span class="pln"> </span><span class="pun">==</span><span class="pln"> </span><span class="lit">0</span><span class="pun">);</span><span class="pln"> </span><span class="com">// the node has been physically extracted from the map</span><span class="pln">
-elemHandle</span><span class="pun">.</span><span class="pln">key</span><span class="pun">()</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="str">"Microsoft"</span><span class="pun">;</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> elemHandle </span><span class="pun">=</span><span class="pln"> langs</span><span class="pun">.</span><span class="pln">extract</span><span class="pun">(</span><span class="str">"ms"</span><span class="pun">);</span><span class="pln">
+assert</span><span class="pun">(</span><span class="pln">langs</span><span class="pun">.</span><span class="pln">count</span><span class="pun">(</span><span class="str">"ms"</span><span class="pun">)</span><span class="pln"> </span><span class="pun">==</span><span class="pln"> </span><span class="lit">0</span><span class="pun">);</span><span class="pln"> </span><span class="com">// the node has been physically extracted from the map</span><span class="pln">
+elemHandle</span><span class="pun">.</span><span class="pln">key</span><span class="pun">()</span><span class="pln"> </span><span class="pun">=</span><span class="pln"> </span><span class="str">"microsoft"</span><span class="pun">;</span><span class="pln">
 langs</span><span class="pun">.</span><span class="pln">insert</span><span class="pun">(</span><span class="pln">move</span><span class="pun">(</span><span class="pln">elemHandle</span><span class="pun">));</span><span class="pln"> </span><span class="com">// move it back</span><span class="pln">
 assert</span><span class="pun">(!</span><span class="pln">elemHandle</span><span class="pun">);</span><span class="pln"> </span><span class="com">// the handle is not valid anymore</span></code></pre>
 
 <p>extract is the only way to change a key of a map element without reallocation:</p>
-
-
 
 <h4 id="merge">merge</h4>
 
@@ -531,11 +546,24 @@ newContacts</span><span class="pun">.</span><span class="pln">merge</span><span 
  </span><span class="com">// use *m or m.value()</span><span class="pln">
 </span><span class="pun">}</span></code></pre>
 
-<p>optional works nicely with <strong>chaining</strong>.</p>
+<p>optional works nicely with <strong>chaining</strong>. Just defining such an operator:</p>
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> T</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">typename</span><span class="pln"> F</span><span class="pun">&gt;</span><span class="pln">
+</span><span class="kwd">auto</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">||(</span><span class="pln">optional</span><span class="pun">&lt;</span><span class="pln">T</span><span class="pun">&gt;</span><span class="pln"> opt</span><span class="pun">,</span><span class="pln"> F f</span><span class="pun">)</span><span class="pln">
+</span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">return</span><span class="pln"> opt </span><span class="pun">?</span><span class="pln"> f</span><span class="pun">(</span><span class="pln">opt</span><span class="pun">.</span><span class="pln">value</span><span class="pun">())</span><span class="pln"> </span><span class="pun">:</span><span class="pln"> nullopt</span><span class="pun">;</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>(that’s basically: <strong>writing the if in a single place</strong>) you can chain computations easily:</p>
+
+
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">auto</span><span class="pln"> value </span><span class="pun">=</span><span class="pln"> </span><span class="pun">(</span><span class="pln">  parse</span><span class="pun">(</span><span class="str">"8.5+(21+x)*5"</span><span class="pun">)</span><span class="pln"> 
+             </span><span class="pun">||</span><span class="pln"> optimize
+             </span><span class="pun">||</span><span class="pln"> evaluate
+             </span><span class="pun">).</span><span class="pln">value_or</span><span class="pun">(</span><span class="pln">std</span><span class="pun">::</span><span class="pln">numeric_limits</span><span class="str">&lt;double&gt;</span><span class="pun">::</span><span class="pln">quiet_NaN</span><span class="pun">());</span></code></pre>
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/Ky3M1j2BJe5sCLc3">http://melpon.org/wandbox/permlink/Ky3M1j2BJe5sCLc3</a></p>
-
-
 
 <h3 id="any">any</h3>
 
@@ -556,26 +584,23 @@ a </span><span class="pun">=</span><span class="pln"> </span><span class="lit">1
 
 <h3 id="variant">variant</h3>
 
-<p>Represents a type-safe union. An instance of std::variant at any given time either holds a value of one of its alternative types, or it holds no value.</p>
+<p>Represents a <strong>type-safe union</strong>. An instance of <strong>std::variant</strong> at any given time either holds a value of one of its alternative types, or it holds no value.</p>
 
-<p>As with unions, if a variant holds a value of some object type T, the object representation of T is allocated directly within the object representation of the variant itself. Variant is not allowed to allocate additional (dynamic) memory. <br>
+<p>As with unions, if a variant holds a value of some object type T, the object representation of T is allocated directly within the object representation of the variant itself. <strong>Variant is not allowed to allocate additional (dynamic) memory</strong>. <br>
 A variant is not permitted to hold references, arrays, or the type void. <br>
-As with unions, the default-initialized variant holds a value of its first alternative, unless that alternative is not default-constructible (in which case default constructor won’t compile: the helper class std::monostate can be used to make such variants default-constructible).</p>
-
-
+As with unions, the default-initialized variant holds a value of its first alternative, unless that alternative is not default-constructible (in which case default constructor won’t compile: the helper class <em>std::monostate</em> can be used to make such variants default-constructible).</p>
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">struct</span><span class="pln"> </span><span class="typ">Visitor</span><span class="pln"> </span><span class="pun">{</span><span class="pln">
-  </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="pln">T</span><span class="pun">...)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln"> 
+  </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pun">...</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="pln">T</span><span class="pun">...)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln"> </span><span class="com">// catch-all</span><span class="pln">
   </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="typ">int</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln">
-  </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="kwd">double</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln"> 
   </span><span class="kwd">template</span><span class="pun">&lt;</span><span class="kwd">typename</span><span class="pln"> T</span><span class="pun">&gt;</span><span class="pln"> </span><span class="kwd">void</span><span class="pln"> </span><span class="kwd">operator</span><span class="pun">()(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> T</span><span class="pun">)</span><span class="pln"> </span><span class="kwd">const</span><span class="pln"> </span><span class="pun">{}</span><span class="pln">
 </span><span class="pun">};</span><span class="pln">
 
 variant</span><span class="pun">&lt;</span><span class="typ">int</span><span class="pun">,</span><span class="pln">string</span><span class="pun">,</span><span class="kwd">double</span><span class="pun">&gt;</span><span class="pln"> i</span><span class="pun">{</span><span class="pln"> </span><span class="lit">10</span><span class="pln"> </span><span class="pun">},</span><span class="pln"> str</span><span class="pun">{</span><span class="pln"> </span><span class="str">"hi"</span><span class="pln"> </span><span class="pun">};</span><span class="pln">
 
 </span><span class="com">// valid (or nullptr) - noexcept</span><span class="pln">
-</span><span class="kwd">auto</span><span class="pln"> intPtr </span><span class="pun">=</span><span class="pln"> get_if</span><span class="str">&lt;int&gt;</span><span class="pun">(</span><span class="pln">i</span><span class="pun">);</span><span class="pln"> 
-</span><span class="kwd">auto</span><span class="pln"> nullPtr </span><span class="pun">=</span><span class="pln"> get_if</span><span class="str">&lt;double&gt;</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);</span><span class="pln"> 
+</span><span class="kwd">auto</span><span class="pln"> intPtr </span><span class="pun">=</span><span class="pln"> get_if</span><span class="str">&lt;int&gt;</span><span class="pun">(&amp;</span><span class="pln">i</span><span class="pun">);</span><span class="pln"> 
+</span><span class="kwd">auto</span><span class="pln"> nullPtr </span><span class="pun">=</span><span class="pln"> get_if</span><span class="str">&lt;double&gt;</span><span class="pun">(&amp;</span><span class="pln">str</span><span class="pun">);</span><span class="pln"> 
 </span><span class="com">// valid (or throws std::bad_variant_access)</span><span class="pln">
 </span><span class="kwd">auto</span><span class="pun">&amp;</span><span class="pln"> strRef </span><span class="pun">=</span><span class="pln"> get</span><span class="str">&lt;string&gt;</span><span class="pun">(</span><span class="pln">str</span><span class="pun">);</span><span class="pln">
 
@@ -589,25 +614,21 @@ visit</span><span class="pun">(</span><span class="pln">v</span><span class="pun
 
 <p>Play: <a href="http://melpon.org/wandbox/permlink/sGMv2G23hzMjVK3S">http://melpon.org/wandbox/permlink/sGMv2G23hzMjVK3S</a></p>
 
-
-
 <h2 id="attributes">Attributes</h2>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/attributes">http://en.cppreference.com/w/cpp/language/attributes</a></p>
 
-<p>Attributes provide the unified standard syntax for implementation-defined language extensions. An attribute can be used almost everywhere in the C++ program, and can be applied to almost everything: to types, to variables, to functions, to names, to code blocks, to entire translation units, although each particular attribute is only valid where it is permitted by the implementation.</p>
+<p>Attributes provide the <strong>unified standard syntax for implementation-defined language extensions</strong>. An attribute can be used almost everywhere in the C++ program, and can be applied to almost everything: to types, to variables, to functions, to names, to code blocks, to entire translation units, although each particular attribute is only valid where it is permitted by the implementation.</p>
 
-<p>Besides the standard attributes listed below, implementations may support arbitrary non-standard attributes with implementation-defined behavior. That’s possibile thanks to C++17 that introduces the following rule: “attributes unknown to an implementation are ignored without causing an error”.</p>
+<p>Besides the standard attributes, implementations may support arbitrary non-standard attributes with implementation-defined behavior. That’s possibile thanks to <strong>C++17</strong> that <strong>introduces the following rule</strong>: <em>attributes unknown to an implementation are ignored without causing an error</em>.</p>
 
-<p>Modern library like the <a href="https://github.com/Microsoft/GSL">GSL</a> already started using custom attributes, like [[gsl::suppress]].</p>
+<p>Modern libraries like the <a href="https://github.com/Microsoft/GSL">GSL</a> already started using custom attributes, like [[gsl::suppress]].</p>
 
 <p>New C++17 standard attributes:</p>
 
 <p><strong>[[fallthrough]]</strong></p>
 
 <p>Appears in a switch statement on a line of its own (technically as an attribute of a null statement), immediately before a case label. Indicates that the fall through from the previous case label is intentional and should not be diagnosed by a compiler that warns on fallthrough:</p>
-
-
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> f</span><span class="pun">(</span><span class="typ">int</span><span class="pln"> n</span><span class="pun">)</span><span class="pln">
 </span><span class="pun">{</span><span class="pln">
@@ -671,23 +692,42 @@ handle </span><span class="typ">LoadModule</span><span class="pun">(</span><span
 
 
 
+<h3 id="nested-namespace-declarations">nested namespace declarations</h3>
+
+<p>Documentation: <a href="http://en.cppreference.com/w/cpp/language/namespace">http://en.cppreference.com/w/cpp/language/namespace</a></p>
+
+<p>Not really a “generic programming” feature, more a language feature. It’s listed here because, it’s more likely that this feature will be massively employed by library writers.</p>
+
+<p>From C++17 you can write:</p>
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">namespace</span><span class="pln"> std</span><span class="pun">::</span><span class="pln">experimental
+</span><span class="pun">{</span><span class="pln">
+   </span><span class="com">// ...</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
+<p>Instead of:</p>
+
+<pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">namespace</span><span class="pln"> std
+</span><span class="pun">{</span><span class="pln">
+    </span><span class="kwd">namespace</span><span class="pln"> experimental
+    </span><span class="pun">{</span><span class="pln">
+       </span><span class="com">// ...</span><span class="pln">
+    </span><span class="pun">}</span><span class="pln">
+</span><span class="pun">}</span></code></pre>
+
 <h3 id="apply-invoke">apply &amp; invoke</h3>
 
 <p>Documentation: <a href="http://en.cppreference.com/w/cpp/utility/apply">http://en.cppreference.com/w/cpp/utility/apply</a>  <br>
 and <a href="http://en.cppreference.com/w/cpp/utility/functional/invoke">http://en.cppreference.com/w/cpp/utility/functional/invoke</a></p>
 
-<p>std::apply invokes a callable object by unpacking a tuple into its arguments:</p>
-
-
+<p><strong>std::apply</strong> invokes a callable object by unpacking a tuple into its arguments:</p>
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> print</span><span class="pun">(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">);</span><span class="pln">
 
 tuple args</span><span class="pun">{</span><span class="str">"hello"</span><span class="pln">s</span><span class="pun">,</span><span class="pln"> </span><span class="lit">10</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">{}};</span><span class="pln">
 std</span><span class="pun">::</span><span class="pln">apply</span><span class="pun">(</span><span class="pln">print</span><span class="pun">,</span><span class="pln"> args</span><span class="pun">);</span></code></pre>
 
-<p>std::invoke is the “unzipped” version of std::apply: it invokes the callable object with the parameters passed:</p>
-
-
+<p><strong>std::invoke</strong> is the “destructured” counterpart: it invokes the callable object with the parameters passed unrolled:</p>
 
 <pre class="prettyprint prettyprinted"><code class="language-cpp"><span class="kwd">void</span><span class="pln"> print</span><span class="pun">(</span><span class="pln">string</span><span class="pun">,</span><span class="pln"> </span><span class="typ">int</span><span class="pun">,</span><span class="pln"> </span><span class="typ">Foo</span><span class="pun">);</span><span class="pln">
 
