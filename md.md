@@ -2,7 +2,7 @@
 
 Information and Examples to experience C++17.
 
-[Last update: Feb 28, 2017)
+[Last update: March 15, 2017)
 
 This document has been written by [Marco Arena](http://marcoarena.wordpress.com).
 
@@ -547,8 +547,87 @@ visit(v, str); // on T
 visit(v, i, str); // on T, T
 visit(v, str, i); // on string, T
 ```
+#### Static polymorphism
 
-Play: http://melpon.org/wandbox/permlink/sGMv2G23hzMjVK3S
+A great article on this topic: https://akrzemi1.wordpress.com/2016/02/27/another-polymorphism/
+
+Disambiguation: this is not about [CRTP-based polymorphism](https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern).
+
+Suppose we have a few physical components that may fit some space. These components are well-defined classes that we may or may not modify. The types could have not a common interface.
+
+Using variant we can easily design a flexible architecture:
+
+```cpp
+using Block =
+  boost::variant<Ballast, Container, MultiContainer>;
+```
+
+Data are separated from "algorithms", as in the visitor pattern, because variants can be **visited**:
+
+```cpp
+struct Weight_allowance
+{
+  Weight operator()(const Container& cont) const
+  {
+    return cont.weight_allowance;
+  }
+      
+  Weight operator()(const MultiContainer& multi) const
+  {
+    Weight wgt (0);
+    for (const Container& cont : multi.containers)
+      wgt += cont.weight_allowance;
+    return wgt;
+  }
+      
+  Weight operator()(const Ballast&) const
+  {
+    return Weight(0);
+  }
+};
+```
+
+The true power of the *static* visitor becomes visible when you have to dispatch on two variant types simultaneously:
+
+```cpp
+struct Fits : boost::static_visitor<bool>
+{
+  bool operator()(const Container& c, const Bundle& b) const
+  {
+    return c.weight_allowance >= b.weight
+        && c.volume_allowance >= b.volume;
+  }
+     
+  bool operator()(const Container&   c,
+                  const MultiBundle& mb) const
+  {
+    return bool("sum of bundles fits into c");
+  }
+     
+  bool operator()(const MultiContainer& mc,
+                  const Bundle&         b) const
+  {
+    for (const Container& c : mc.containers)
+      if (Fits{}(c, b)) // self-call
+        return true;
+    return false;
+  }
+     
+  bool operator()(const MultiContainer& mc,
+                  const MultiBundle&    mb) const
+  {
+    return bool("all bundles fit across all sub containers");
+  }
+      
+  template <typename T>
+  bool operator()(const Ballast&, const T&) const
+  {
+    return false;
+  }
+};
+```
+
+Play: http://melpon.org/wandbox/permlink/Bx1EAJNJXOFPwVEM
 
 ## Attributes
 
