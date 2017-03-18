@@ -279,7 +279,7 @@ Basically, I pay a new string for each token. Actually, each token is already pa
 
 Can I do better?
 
-Sure, I can employ**string_view**:
+Sure, I can employ **string_view**:
 ```cpp
 vector<string_view> split(string_view str, const char* delims)
 {
