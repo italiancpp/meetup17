@@ -362,7 +362,7 @@ Does it recall you anything?
 
 Yes, **trim**. Without creating a new string instance.
 
-Play: http://melpon.org/wandbox/permlink/D67pp9xu1F4VVhJx
+Play: http://melpon.org/wandbox/permlink/YB8MHwGhJAOXCRKA
 
 Some string_view pitfalls: https://marcoarena.wordpress.com/2017/01/03/string_view-odi-et-amo/
 
