@@ -627,7 +627,7 @@ struct Fits : boost::static_visitor<bool>
 };
 ```
 
-Play: http://melpon.org/wandbox/permlink/Bx1EAJNJXOFPwVEM
+Play: http://melpon.org/wandbox/permlink/8WrzZjyLtR5TVSMF
 
 ## Attributes
 
