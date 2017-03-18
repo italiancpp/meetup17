@@ -749,7 +749,7 @@ void print(string, int, Foo);
 std::invoke(print, "hello"s, 10, Foo{});
 ```
 
-Play: http://melpon.org/wandbox/permlink/CbiNcRsGE5YrEnPZ
+Play: http://melpon.org/wandbox/permlink/Mtifd1rPhvLGdmkf
 
 ### make_from_tuple
 
