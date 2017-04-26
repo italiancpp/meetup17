@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iteratori, containers e algoritmi</title>
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><h1 id="iteratori-containers-e-algoritmi">Iteratori, containers e algoritmi</h1>
+
+<p>Nella libreria standard del C++ è inclusa la <em>standard template library</em> (<strong>STL</strong>), ovvero una collezione di algoritmi, strutture dati (containers) e iteratori generici (<em>template</em>). <br>
+Nonostante non sia corretto, nel gergo comune dei programmatori C++ la STL coincide con la libreria standard del linguaggio. Di fatto, tutto il resto della libreria standard è stato sviluppato cercando di seguire i principi di design della STL.</p>
+
+<p>Nel resto di questa trattazione useremo indistintamente il termine STL e il termine libreria standard.</p>
+
+<p>In questo meetup conosceremo la <strong>triade</strong> della STL, ovvero i concetti di <em>iteratore</em>, <em>container</em> e <em>algoritmo</em>.</p>
+
+<p><div class="toc">
+<ul>
+<li><a href="#iteratori-containers-e-algoritmi">Iteratori, containers e algoritmi</a><ul>
+<li><a href="#containers">Containers</a><ul>
+<li><a href="#un-esempio-sommiamo-una-sequenza-di-elementi">Un esempio: sommiamo una sequenza di elementi</a></li>
+</ul>
+</li>
+<li><a href="#iteratori">Iteratori</a></li>
+<li><a href="#algoritmi">Algoritmi</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</p>
+
+
+
+<h2 id="containers">Containers</h2>
+
+<p>Un container è una classe <strong>generica</strong> che implementa una certa struttura dati. <br>
+Reference: <a href="http://en.cppreference.com/w/cpp/container">http://en.cppreference.com/w/cpp/container</a></p>
+
+<p>Ogni container:</p>
+
+<ul>
+<li>è <strong>generico</strong>, ovvero funziona su qualsiasi tipo che soddisfa alcuni <strong>requisiti</strong> (formalmente chiamati <strong>Concept</strong>) base specificati dal container stesso;</li>
+<li><strong>gestisce</strong> internamente lo <strong>storage</strong> (la memoria) degli elementi che contiene;</li>
+<li>soddisfa alcuni <strong>requisiti</strong> (formalmente chiamati <strong>Concept</strong>);</li>
+<li>espone alcune <strong>funzioni</strong> per operare sugli elementi memorizzati.</li>
+</ul>
+
+<p>Il <em>Concept</em> base di ogni container è, appunto, quello di <a href="http://en.cppreference.com/w/cpp/concept/Container">Container</a>. Sopra a questo ogni container ne può soddisfare degli altri. Ad esempio:</p>
+
+<pre><code>vector&lt;T&gt;
+</code></pre>
+
+<p>Soddisfa anche i requisiti (concept) di <em>ContiguousContainer</em> (fino al C++14 si arrivava fino a <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer">SequenceContainer</a>), <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer">ReversibleContainer</a> e <a href="http://en.cppreference.com/w/cpp/concept/AllocatorAwareContainer">AllocatorAwareContainer</a>.</p>
+
+<p>Nella libreria standard, i containers sono suddivisi in:</p>
+
+<ul>
+<li>Sequence containers (alcuni possono essere anche <em>contigui</em>)</li>
+<li>Associative containers</li>
+<li>Unordered associative containers</li>
+<li>Container adaptors</li>
+</ul>
+
+<p>Ogni container memorizza e gestisce oggetti del tipo dichiarato. Ad esempio:</p>
+
+<pre><code>vector&lt;int&gt;
+</code></pre>
+
+<p>Contiene degli <code>int</code>. Questo tipo è chiamato <strong>underlying type</strong> ed è raggiungibile accedendo al tipo pubblico:</p>
+
+<pre><code>vector&lt;int&gt;::value_type
+</code></pre>
+
+<p><strong>ogni container espone</strong> <code>value_type</code> perché richiesto dal concept <a href="http://en.cppreference.com/w/cpp/concept/Container">Container</a>.</p>
+
+<p>Esempi:</p>
+
+<pre><code>string s; // typedef per basic_string&lt;char&gt;
+vector&lt;int&gt; v;
+</code></pre>
+
+<p>Affinché il container sia utilizzabile, l’<strong>underlying type deve soddisfare a sua volta alcuni requisiti</strong> (concept) che possono variare da container a container. Alcuni requisiti cambiano anche in base alle operazioni che si effettuano.</p>
+
+<p>L’unico requisito minimo per essere accettato da ogni container standard è <a href="http://en.cppreference.com/w/cpp/concept/Erasable">Erasable</a>, ovvero deve essere possibile cancellare ogni elemento tramite un determinato allocatore. Usando un allocatore standard (quello di default) questo equivale a dire che l’underlying type deve avere un distruttore accessibile.</p>
+
+
+
+<h3 id="un-esempio-sommiamo-una-sequenza-di-elementi">Un esempio: sommiamo una sequenza di elementi</h3>
+
+<p>Iniziamo con una challenge base per prendere confidenza con <code>std::vector</code>: il nostro compito è quello di stampare la somma di tutti gli elementi di una sequenza. <br>
+Quando dobbiamo usare un array dinamico - ovvero con una dimensione non nota a tempo di compilazione - la scelta più semplice - e generalmente migliore - ricade su <code>std::vector</code>.</p>
+
+<p>Proprio perché assomiglia ad un array dinamico, la sintassi per accedere agli elementi di un vector è proprio la stessa degli array:</p>
+
+<pre><code>void PrintSum(const vector&lt;int&gt;&amp; v)
+{
+    int sum = 0;
+    for (auto i=0u; i&lt;v.size(); ++i)
+       sum += v[i]; // elementi in posizione i (0-based)
+    cout &lt;&lt; sum;
+}
+</code></pre>
+
+<p>In particolare:</p>
+
+<ul>
+<li><code>size()</code>, ritorna il numero di elementi memorizzati nel vettore,</li>
+<li><code>operator[i]</code>, ritorna una <em>reference</em> all’elemento i-esimo memorizzato nel vettore.</li>
+</ul>
+
+<p>Alcune cose da ricordare su <code>std::vector</code>:</p>
+
+<ul>
+<li>garantisce che i suoi elementi siano memorizzati <strong>contiguamente</strong> (ed è possibile accedere a questo array contiguo per passarlo - ad esempio - ad una funzione C);</li>
+<li>gestisce automaticamente la <strong>lunghezza</strong> (<em>size</em>) e la <strong>capacità</strong> (<em>capacity</em>) del suo storage;</li>
+<li>è possibile preallocare (<code>reserve</code>) e preinizializzare (<code>resize</code>) un vettore;</li>
+<li>aggiungere un elemento ad un vettore <em>potrebbe</em> causare la <strong>rilocazione</strong> dei suoi elementi (per garantire la contiguità);</li>
+</ul>
+
+<p>Supponiamo di voler cambiare container: invece di std::vector vogliamo utilizzare <code>std::list</code>, ovvero una lista doppiamente concatenata che permette inserimento e rimozione in tempo costante:</p>
+
+<pre><code>void PrintSum(const list&lt;int&gt;&amp; l)
+{
+    int sum = 0;
+    for (auto i=0u; i&lt;l.size(); ++i)
+       sum += l[i]; // ?
+    cout &lt;&lt; sum;
+}
+</code></pre>
+
+<p>Ma con GCC otterrei questo errore di compilazione:</p>
+
+<pre><code>prog.cc:46:20: error: no match for 'operator[]' (operand types are 'const std::__cxx11::list&lt;int&gt;' and 'int')
+            sum += l[i]; // ?
+</code></pre>
+
+<p>Effettivamente <code>list</code> non è accessibile allo stesso modo di <code>vector</code>, utilizzando le <code>[]</code>.</p>
+
+<p>Dobbiamo allora capire come si accede agli elementi di una list e per trovare una risposta è necessario introdurre il secondo protagonista della nostra triade: l’<strong>iteratore</strong>.</p>
+
+
+
+<h2 id="iteratori">Iteratori</h2>
+
+<p>Un iteratore è una classe che astrae la navigabilità su una struttura dati nascondendone i dettagli implementativi.</p>
+
+<p><img src="https://sketch.io/render/sk-b9bc1861e442a04b88896b2a8d187725.jpeg" alt="enter image description here" title=""></p>
+
+<p>Possiamo stampare tutti gli elementi di queste strutture dati qui sopra utilizzando la stessa sintassi, cioè chiamando le stesse funzioni?</p>
+
+<p>Idealmente vorremmo scrivere:</p>
+
+<pre><code>void print(Iteratore it)
+{
+    while (it.hasNext())
+        cout &lt;&lt; it.Next();
+}
+</code></pre>
+
+<p>a prescindere dal tipo di struttura dati che <code>Iteratore</code> nasconde.</p>
+
+<p>C’è subito da dire che in C++ la filosofia non è mai quella di passare un solo iteratore e fare un controllo à la <code>hasNext</code>, ma piuttosto si passa sempre una coppia di iteratori che identifica un range nel quale operare:</p>
+
+<pre><code>void print(Iteratore begin, Iteratore end)
+{
+    while (begin != end)
+        ...
+}
+</code></pre>
+
+<p>La coppia <code>[begin, end)</code> costituisce un range <strong>half open</strong>, ovvero tutti gli elementi presi in considerazione sono quelli fino ad <strong>end escluso</strong>. Ad esempio, per un <code>vector</code>:</p>
+
+<p><img src="https://sketch.io/render/sk-5c175e12f12ddebae18fe85f6b86d9b1.jpeg" alt="enter image description here" title=""></p>
+
+<p>I vantaggi di utilizzare questa convenzione sono principalmente due:</p>
+
+<ul>
+<li>non c’è uno special case per un range vuoto (begin e end semplicemente coincideranno);</li>
+<li>la condizione di terminazione di un loop sarà banalmente <code>begin != end</code></li>
+</ul>
+
+<p>Sempre riferendoci all’immagine precedente, se volessimo stampare solo i primi 4 elementi del vettore, questa sarebbe la coppia <code>begin, end</code> da passare all nostra <code>print</code>:</p>
+
+<p><img src="https://sketch.io/render/sk-222512208731e21e8cd26b77b16121b2.jpeg" alt="enter image description here" title=""></p>
+
+<p>I containers STL rendono disponibili funzioni <code>begin()</code> e <code>end()</code> (e anche <code>cbegin()</code> e <code>cend()</code>, versioni <code>const</code>) che ritornano iteratori all’inizio e alla fine del container:</p>
+
+<pre><code>vector&lt;int&gt; v = {...};
+print(v.begin(), v.end());
+</code></pre>
+
+<p>A questo punto, per completare la nostra funzione <code>print</code>, dobbiamo capire come accedere all’elemento “puntato” dall’iteratore e come “mandare avanti” l’iteratore. La sintassi è esattamente la stessa dei puntatori:</p>
+
+<p>Per ottenere una reference all’elemento puntato bisogna <strong>dereferenziare</strong> l’iteratore:</p>
+
+<pre><code>auto&amp; value = *it;
+</code></pre>
+
+<p>Per mandare l’iteratore avanti di una posizione bisogna “incrementarlo”:</p>
+
+<pre><code>++it; // oppure it++
+</code></pre>
+
+<p>La differenza tra <strong>pre-incremento</strong> (++it) e <strong>post-incremento</strong> (it++) è data dal fatto che nel secondo caso viene restituita una copia dell’iteratore nella posizione prima dell’incremento.</p>
+
+<p>A questo punto possiamo completare la <code>print</code>:</p>
+
+<pre><code>void print(Iteratore begin, Iteratore end)
+{
+    while (begin != end)
+    {
+        cout &lt;&lt; *begin;
+        ++begin;
+    }
+}
+</code></pre>
+
+<p>Resta da capire di che tipo sia <code>Iteratore</code>.</p>
+
+<p>In C++ un iteratore può essere qualsiasi tipo in grado di <em>comportarsi come tale</em>. Nel caso della nostra funzione <code>print</code>, possiamo effettivamente passare qualsiasi tipo che supporti:</p>
+
+<ul>
+<li>un operatore <code>!=</code>;</li>
+<li>un operatore <code>*</code>;</li>
+<li>un operatore <code>++</code>.</li>
+</ul>
+
+<p>Quindi potremmo pensare di passare anche una coppia di puntatori ad array:</p>
+
+<pre><code>int arr[] = {1,2,3};
+print(arr, arr + 3);
+</code></pre>
+
+<p>Idiomaticamente si può scrivere:</p>
+
+<pre><code>print(begin(arr), end(arr));
+</code></pre>
+
+<p>Infatti, dal C++11, la libreria standard contiene std::begin e std::end (e rispettive versioni <code>const</code> e reverse) che restituiscono l’equivalente di <code>container.begin()</code> e <code>container.end()</code> nel caso di container STL, ma sono in grado anche di restituire inizio e fine di un array nel caso di “array C”. Quindi, genericamente, è sempre meglio utilizzare le <strong>non-member begin/end</strong> anziché le corrispettive funzioni membro, proprio perché <strong>valide anche per gli array</strong>.</p>
+
+<p>Non finisce qui.</p>
+
+<p>Supponiamo di voler stampare solo gli elementi dal primo al quarto, proprio come nell’immagine:</p>
+
+<p><img src="https://sketch.io/render/sk-222512208731e21e8cd26b77b16121b2.jpeg" alt="enter image description here" title=""></p>
+
+<p>Ricordandoci l’aritmetica dei puntatori, ci buttiamo:</p>
+
+<pre><code>vector&lt;int&gt; v = {...};
+print(begin(v), begin(v)+4);
+</code></pre>
+
+<p>E ci va bene! </p>
+
+<p>Proviamo a fare la stessa cosa con <code>list</code>:</p>
+
+<pre><code>list&lt;int&gt; l = {...};
+print(begin(l), begin(l)+4);
+</code></pre>
+
+<p>Ma siamo meno fortunati e con clang otteniamo - tra gli altri - questo errore in testa:</p>
+
+<pre><code>error: invalid operands to binary expression ('decltype(__c.begin())' (aka '__list_iterator&lt;int, void *&gt;') and 'int')
+</code></pre>
+
+<p>Tradotto significa che l’iteratore di <code>list</code> non può essere “sommato” con un <code>int</code>. </p>
+
+<p>Dobbiamo allora introdurre un altro concetto importante legato agli iteratori C++, quello di <strong>categoria</strong>.</p>
+
+<p>In C++ gli iteratori hanno <strong>categorie</strong> diverse in base alla “classe di operazioni” che sanno fare. </p>
+
+<p>Esistono 6 categorie di iteratori C++ nella libreria standard:</p>
+
+<p><img src="https://sketch.io/render/sk-6036018089d22ea7ca21fa378327006c.jpeg" alt="enter image description here" title=""></p>
+
+<p>L’organizzazione di queste categorie non è casuale: ad eccezione della solitaria <code>OutputIterator</code>, le restanti sono visualizzate dalla più “potente” (<code>ContiguousIterator</code>) a quella meno (<code>InputIterator</code>). Una certa categoria è in grado di fare tutte le operazioni delle categorie inferiori nella gerarchia. Ad esempio, un <code>BidirectionalIterator</code> è in grado di:</p>
+
+<ul>
+<li>leggere (e.g. <code>*it</code>)</li>
+<li>incrementarsi (e.g. <code>++it</code>)</li>
+<li>incrementarsi con validità multi-passo</li>
+<li>decrementarsi (e.g. <code>--it</code>)</li>
+</ul>
+
+<p>Ma non supporta un accesso random (e.g. <code>it + N</code> o <code>it[N]</code>) né garantisce che lo storage riferito sia contiguo.</p>
+
+<p>In questo modo, qualsiasi tipo che supporti le operazioni di una certa categoria potrà essere utilizzato come iteratore, garantendo (a compile-time) un certo set di funzionalità.</p>
+
+<p>Nel nostro esempio precedente, <em>list iterator</em> è un BidirectionalIterator e quindi non supporta un accesso randomico (e.g. <code>it + 4</code> non è supportato). Il C++ non implementa un accesso randomico su <code>list</code> perché non avrebbe costo costante: per raggiungere il nodo N-esimo, l’iteratore deve “muoversi” di N passi, facendo perdere la garanzia dell’accesso randomico (che è, appunto, costante).</p>
+
+<p>Per ottenere lo stesso risultato potremmo fare:</p>
+
+<pre><code>list&lt;int&gt; l = {...};
+auto endIt = begin(l); ++endIt; ++endIt; ++endIt; ++endIt;
+print(begin(l), endIt);
+</code></pre>
+
+<p>Ma è molto scomodo. Possiamo usare allora funzione standard - <code>std::next</code> - in grado di restituirci un iteratore passato in input incrementato di N posizioni:</p>
+
+<pre><code>list&lt;int&gt; l = {...};
+print(begin(l), next(begin(l), 4));
+</code></pre>
+
+<p>La genericità della funzione garantisce che per iteratori che soddisfano la categoria <code>RandomAccess</code>, l’incremento sarà costante (+N), mentre per gli altri sarà in funzione di N (e.g. verrà fatto un ciclo di N iterazioni).</p>
+
+<p>Ancora non è chiaro, però, quale sia il tipo da utilizzare nella nostra funzione <code>print</code>.</p>
+
+<p>Abbiamo detto che qualsiasi tipo in grado di implementare le funzionalità di un iteratore può essere utilizzato come tale. Sarà compito della funzione “aspettarsi” categorie di iteratori diversi in base a quello che deve essere realizzato. Nella nostra <code>print</code> sarà sufficiente un <code>InputIterator</code> in quanto è sufficiente accedere gli elementi in una <em>sola passata</em>.</p>
+
+<p>La storia è leggermente diversa per una ricerca binaria (e.g. <code>std::binary_search</code>, <code>std::lower_bound</code>) che richiede dei <code>ForwardIterator</code> poiché necessario che dopo aver letto un elemento <code>i</code> sia possibile leggerne uno “all’indietro” (senza decrementare l’iteratore, ma semplicemente avendone un altro “più indietro” a disposizione): </p>
+
+<p><img src="https://sketch.io/render/sk-19a3578ace0497103be9083c2d4b96c7.jpeg" alt="enter image description here" title=""></p>
+
+<p>Prima di capire che tipo passare alle nostre funzioni, vediamo un altro esempio interessante: la lettura dell’input. Abbiamo detto che possiamo usare qualsiasi tipo come iteratore, basta che soddisfi alcuni requisiti. Niente ci vieta, però, di utilizzare lo stesso meccanismo per nascondere altre “strutture” che non siano necessariamente containers. Se volessimo usare la nostra <code>print</code> per stampare gli elementi dello standard input? Possiamo farlo, perché in C++ esistono iteratori anche per leggere l’input:</p>
+
+<pre><code>print(istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;());
+</code></pre>
+
+<p>Un <a href="http://en.cppreference.com/w/cpp/iterator/istream_iterator">istream_iterator</a> leggere oggetti del tipo specificato, come se fossero letti per mezzo dell’<code>operator&gt;&gt;</code>.  Un <code>istream_iterator</code> default-costruito rappresenta “l’end iterator per gli stream”.</p>
+
+<p>E se oltre a leggere volessimo scrivere? Cioè, se avessimo una funzione che data una coppia di iteratori <code>begin, end</code> e un terzo iteratore <code>out</code> sia in grado di scrivere il contenuto del range <code>begin-end</code> a partire da <code>out</code>? Potremmo riscrivere la nostra print in questo modo:</p>
+
+<pre><code>void print(Iteratore begin, Iteratore end, Iteratore out)
+{
+    while (begin != end)
+    {
+        *out = *begin;
+        ++begin;
+        ++out;
+    }           
+}
+</code></pre>
+
+<p>Avrete notato che <code>cout &lt;&lt; *begin</code> è diventato <code>*out = *begin</code>. <code>out</code> però non può essere solo un <code>Iteratore</code>, perché l’abbiamo classificato come un <code>InputIterator</code>. Un <code>InputIterator</code> non deve necessariamente avere valida l’espressione <code>*it = o</code> ma solo <code>*it</code> (eventualmente memorizzata in una variabile). Cioè, non è obbligatorio che il risultato di <code>*it</code> sia <em>assegnabile</em>.</p>
+
+<p>Possiamo quindi intuire che out dovrà rispettare la categoria di <a href="http://en.cppreference.com/w/cpp/concept/OutputIterator">OutputIterator</a>, che in effetti è l’unica a imporre che <code>*it = o</code> sia valida.</p>
+
+<p>Proviamo allora a scrivere <code>print</code> in questo modo, anche se i tipi non esistono:</p>
+
+<pre><code>void print(InputIterator begin, InputIterator end, OutputIterator out)
+{
+    while (begin != end)
+    {
+        *out = *begin;
+        ++begin;
+        ++out;
+    }
+}
+</code></pre>
+
+<p>Volendo stampare tutti gli elementi tra begin e end, sarà sufficiente usare un <a href="http://en.cppreference.com/w/cpp/iterator/ostream_iterator">ostream_iterator</a>, ovvero un iteratore di output che sappia operare su un <code>ostream</code>:</p>
+
+<pre><code>print(  istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;(), 
+        ostream_iterator&lt;int&gt;(cout));
+</code></pre>
+
+<p>Il nome <em>print</em> è fuorviante. Questa funzione sa fare molto di più: è in grado di <strong>copiare</strong> tutti gli elementi tra <code>begin</code> e <code>end</code> a partire da <code>out</code>.  Questa funzione (con una piccola differenza) esiste nella libreria standard e si chiama <code>copy</code>. </p>
+
+<p>Diamo il benvenuto al nostro primo algoritmo.</p>
+
+
+
+<h2 id="algoritmi">Algoritmi</h2>
+
+<p>Un algoritmo è una funzione <strong>generica</strong> in grado di compiere una certa operazione su (almeno) un <strong>range</strong> di elementi, espresso come coppia di iteratori <code>[begin, end)</code>.</p>
+
+<p>Arrivati a questo punto ci manca solo un singolo concetto per capire come funzionano gli algoritmi della standard library e come scrivere i nostri: capire cosa voglia dire <strong>funzione generica</strong>.</p>
+
+<p>Non siamo riusciti a trovare il tipo da dare ai nostri parametri “iteratori” perché abbiamo detto che qualsiasi tipo in grado di soddisfarne i requisiti è accettabile. La nostra print è capace di accettare vector e list iterators, ma anche array e stream iterators.</p>
+
+<p>Effettivamente non sappiamo che tipi accettare perché la nostra funzione è generica, cioè indipendente dal tipo utilizzato. A questo punto la risposta non può essere che una: usare dei parametri <strong>template</strong>:</p>
+
+<pre><code>template&lt;typename InputIt, typename OutputIt&gt;
+OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
+</code></pre>
+
+<p>Abbiamo riportato la vera <code>copy</code> presente nella standard library (ritorna l’iteratore successivo all’ultimo elemento scritto - l’iteratore “end” di uscita).</p>
+
+<p>Convenzionalmente i nomi dei template richiamano quelli delle categorie di iteratori richiesti dalla funzione.</p>
+
+<p>Esistono numerosissimi algoritmi nella standard library: <br>
+<a href="http://en.cppreference.com/w/cpp/algorithm">http://en.cppreference.com/w/cpp/algorithm</a></p>
+
+<p>Adesso ne scopriremo alcuni risolvendo qualcha programming challenge delle passate <a href="http://www.italiancpp.org/coding-gyms/">Coding Gyms</a>.</p></div></body>
+</html>
