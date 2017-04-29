@@ -9,10 +9,10 @@
 </head>
 <body><div class="container"><h1 id="iteratori-containers-e-algoritmi">Iteratori, containers e algoritmi</h1>
 
-<p>Nella libreria standard del C++ è inclusa la <em>standard template library</em> (<strong>STL</strong>), ovvero una collezione di algoritmi, strutture dati (containers) e iteratori generici (<em>template</em>). <br>
-Nonostante non sia corretto, nel gergo comune dei programmatori C++ la STL coincide con la libreria standard del linguaggio. Di fatto, tutto il resto della libreria standard è stato sviluppato cercando di seguire i principi di design della STL.</p>
+<p>Nella libreria standard del C++ è inclusa la <em>standard template library</em> (<strong>STL</strong>), ovvero una collezione di algoritmi, strutture dati (containers) e iteratori generici. <br>
+Nonostante non sia del tutto corretto, nel gergo comune dei programmatori C++ la STL coincide con la libreria standard del linguaggio. Di fatto, tutto il resto della libreria standard è stato sviluppato cercando di seguire i principi di design della STL.</p>
 
-<p>Nel resto di questa trattazione useremo indistintamente il termine STL e il termine libreria standard.</p>
+<p>Nel resto di questa trattazione useremo indistintamente i termini STL e libreria standard.</p>
 
 <p>In questo meetup conosceremo la <strong>triade</strong> della STL, ovvero i concetti di <em>iteratore</em>, <em>container</em> e <em>algoritmo</em>.</p>
 
@@ -25,13 +25,20 @@ Nonostante non sia corretto, nel gergo comune dei programmatori C++ la STL coinc
 </li>
 <li><a href="#iteratori">Iteratori</a></li>
 <li><a href="#algoritmi">Algoritmi</a></li>
+<li><a href="#challenges">Challenges</a><ul>
+<li><a href="#simple-array-sum">Simple array sum</a></li>
+<li><a href="#camelcase">camelCase</a></li>
+<li><a href="#missing-element">Missing element</a></li>
+<li><a href="#is-palindrome">Is Palindrome</a></li>
+<li><a href="#starts-with">Starts with</a></li>
+<li><a href="#alternating-characters">Alternating Characters</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </div>
 </p>
-
-
 
 <h2 id="containers">Containers</h2>
 
@@ -41,7 +48,7 @@ Reference: <a href="http://en.cppreference.com/w/cpp/container">http://en.cppref
 <p>Ogni container:</p>
 
 <ul>
-<li>è <strong>generico</strong>, ovvero funziona su qualsiasi tipo che soddisfa alcuni <strong>requisiti</strong> (formalmente chiamati <strong>Concept</strong>) base specificati dal container stesso;</li>
+<li>è <strong>generico</strong>, ovvero funziona su qualsiasi tipo di dato che sia in grado di adempiere ad alcuni <strong>requisiti</strong> (formalmente chiamati <strong>Concept</strong>) richiesti dal container (non adempiere risulta formalmente in <em>undefined behavior</em> - questi requisiti sono generalmente controllati a compile-time dal container);</li>
 <li><strong>gestisce</strong> internamente lo <strong>storage</strong> (la memoria) degli elementi che contiene;</li>
 <li>soddisfa alcuni <strong>requisiti</strong> (formalmente chiamati <strong>Concept</strong>);</li>
 <li>espone alcune <strong>funzioni</strong> per operare sugli elementi memorizzati.</li>
@@ -85,20 +92,17 @@ vector&lt;int&gt; v;
 
 <p>L’unico requisito minimo per essere accettato da ogni container standard è <a href="http://en.cppreference.com/w/cpp/concept/Erasable">Erasable</a>, ovvero deve essere possibile cancellare ogni elemento tramite un determinato allocatore. Usando un allocatore standard (quello di default) questo equivale a dire che l’underlying type deve avere un distruttore accessibile.</p>
 
-
-
 <h3 id="un-esempio-sommiamo-una-sequenza-di-elementi">Un esempio: sommiamo una sequenza di elementi</h3>
 
-<p>Iniziamo con una challenge base per prendere confidenza con <code>std::vector</code>: il nostro compito è quello di stampare la somma di tutti gli elementi di una sequenza. <br>
-Quando dobbiamo usare un array dinamico - ovvero con una dimensione non nota a tempo di compilazione - la scelta più semplice - e generalmente migliore - ricade su <code>std::vector</code>.</p>
+<p>Iniziamo con una challenge base per prendere confidenza con <code>std::vector</code>: il nostro compito è quello di stampare la somma di tutti gli elementi di una sequenza.</p>
 
-<p>Proprio perché assomiglia ad un array dinamico, la sintassi per accedere agli elementi di un vector è proprio la stessa degli array:</p>
+<p>Dobbiamo usare una struttura tipo array dinamico - ovvero con una dimensione non nota a tempo di compilazione - e quindi la nostra scelta ricade su <code>std::vector</code>:</p>
 
 <pre><code>void PrintSum(const vector&lt;int&gt;&amp; v)
 {
     int sum = 0;
     for (auto i=0u; i&lt;v.size(); ++i)
-       sum += v[i]; // elementi in posizione i (0-based)
+       sum += v[i]; // elemento in posizione i (0-based)
     cout &lt;&lt; sum;
 }
 </code></pre>
@@ -113,13 +117,13 @@ Quando dobbiamo usare un array dinamico - ovvero con una dimensione non nota a t
 <p>Alcune cose da ricordare su <code>std::vector</code>:</p>
 
 <ul>
-<li>garantisce che i suoi elementi siano memorizzati <strong>contiguamente</strong> (ed è possibile accedere a questo array contiguo per passarlo - ad esempio - ad una funzione C);</li>
+<li>garantisce che i suoi elementi siano memorizzati <strong>contiguamente</strong> (ed è possibile accedere al puntatore a questi elementi - ad esempio per passarlo ad una API C);</li>
 <li>gestisce automaticamente la <strong>lunghezza</strong> (<em>size</em>) e la <strong>capacità</strong> (<em>capacity</em>) del suo storage;</li>
 <li>è possibile preallocare (<code>reserve</code>) e preinizializzare (<code>resize</code>) un vettore;</li>
 <li>aggiungere un elemento ad un vettore <em>potrebbe</em> causare la <strong>rilocazione</strong> dei suoi elementi (per garantire la contiguità);</li>
 </ul>
 
-<p>Supponiamo di voler cambiare container: invece di std::vector vogliamo utilizzare <code>std::list</code>, ovvero una lista doppiamente concatenata che permette inserimento e rimozione in tempo costante:</p>
+<p>Supponiamo di voler cambiare container: invece di <code>std::vector</code> vogliamo utilizzare <code>std::list</code>, ovvero una lista doppiamente concatenata che permette inserimento e rimozione in tempo costante:</p>
 
 <pre><code>void PrintSum(const list&lt;int&gt;&amp; l)
 {
@@ -130,7 +134,7 @@ Quando dobbiamo usare un array dinamico - ovvero con una dimensione non nota a t
 }
 </code></pre>
 
-<p>Ma con GCC otterrei questo errore di compilazione:</p>
+<p>Ma con GCC otteniamo questo errore di compilazione:</p>
 
 <pre><code>prog.cc:46:20: error: no match for 'operator[]' (operand types are 'const std::__cxx11::list&lt;int&gt;' and 'int')
             sum += l[i]; // ?
@@ -139,8 +143,6 @@ Quando dobbiamo usare un array dinamico - ovvero con una dimensione non nota a t
 <p>Effettivamente <code>list</code> non è accessibile allo stesso modo di <code>vector</code>, utilizzando le <code>[]</code>.</p>
 
 <p>Dobbiamo allora capire come si accede agli elementi di una list e per trovare una risposta è necessario introdurre il secondo protagonista della nostra triade: l’<strong>iteratore</strong>.</p>
-
-
 
 <h2 id="iteratori">Iteratori</h2>
 
@@ -161,7 +163,7 @@ Quando dobbiamo usare un array dinamico - ovvero con una dimensione non nota a t
 
 <p>a prescindere dal tipo di struttura dati che <code>Iteratore</code> nasconde.</p>
 
-<p>C’è subito da dire che in C++ la filosofia non è mai quella di passare un solo iteratore e fare un controllo à la <code>hasNext</code>, ma piuttosto si passa sempre una coppia di iteratori che identifica un range nel quale operare:</p>
+<p>Prima di tutto, in C++ non si passa un solo iteratore per fare poi un controllo à la <code>hasNext</code>. Piuttosto, si passano due iteratori identificando un range sul quale operare:</p>
 
 <pre><code>void print(Iteratore begin, Iteratore end)
 {
@@ -177,8 +179,8 @@ Quando dobbiamo usare un array dinamico - ovvero con una dimensione non nota a t
 <p>I vantaggi di utilizzare questa convenzione sono principalmente due:</p>
 
 <ul>
-<li>non c’è uno special case per un range vuoto (begin e end semplicemente coincideranno);</li>
-<li>la condizione di terminazione di un loop sarà banalmente <code>begin != end</code></li>
+<li>non c’è uno special case per un range vuoto (<code>begin</code>, <code>end</code> semplicemente coincideranno);</li>
+<li>la condizione di terminazione di un loop è banalmente <code>begin != end</code>.</li>
 </ul>
 
 <p>Sempre riferendoci all’immagine precedente, se volessimo stampare solo i primi 4 elementi del vettore, questa sarebbe la coppia <code>begin, end</code> da passare all nostra <code>print</code>:</p>
@@ -191,7 +193,9 @@ Quando dobbiamo usare un array dinamico - ovvero con una dimensione non nota a t
 print(v.begin(), v.end());
 </code></pre>
 
-<p>A questo punto, per completare la nostra funzione <code>print</code>, dobbiamo capire come accedere all’elemento “puntato” dall’iteratore e come “mandare avanti” l’iteratore. La sintassi è esattamente la stessa dei puntatori:</p>
+<p>A questo punto, per completare la nostra funzione <code>print</code>, dobbiamo capire come accedere all’elemento “puntato” dall’iteratore e come “mandare avanti” l’iteratore. </p>
+
+<p>La sintassi è analoga a quella che si usa per i puntatori:</p>
 
 <p>Per ottenere una reference all’elemento puntato bisogna <strong>dereferenziare</strong> l’iteratore:</p>
 
@@ -203,7 +207,7 @@ print(v.begin(), v.end());
 <pre><code>++it; // oppure it++
 </code></pre>
 
-<p>La differenza tra <strong>pre-incremento</strong> (++it) e <strong>post-incremento</strong> (it++) è data dal fatto che nel secondo caso viene restituita una copia dell’iteratore nella posizione prima dell’incremento.</p>
+<p>La differenza tra <strong>pre-incremento</strong> (<code>++it</code>) e <strong>post-incremento</strong> (<code>it++</code>) è data dal fatto che nel secondo caso viene restituita una copia dell’iteratore nella posizione prima dell’incremento.</p>
 
 <p>A questo punto possiamo completare la <code>print</code>:</p>
 
@@ -222,9 +226,9 @@ print(v.begin(), v.end());
 <p>In C++ un iteratore può essere qualsiasi tipo in grado di <em>comportarsi come tale</em>. Nel caso della nostra funzione <code>print</code>, possiamo effettivamente passare qualsiasi tipo che supporti:</p>
 
 <ul>
-<li>un operatore <code>!=</code>;</li>
-<li>un operatore <code>*</code>;</li>
-<li>un operatore <code>++</code>.</li>
+<li>un operatore per confrontare - <code>!=</code>;</li>
+<li>un operatore per dereferenziare - <code>*</code>;</li>
+<li>un operatore per pre-incrementare - <code>++</code>.</li>
 </ul>
 
 <p>Quindi potremmo pensare di passare anche una coppia di puntatori ad array:</p>
@@ -238,7 +242,7 @@ print(arr, arr + 3);
 <pre><code>print(begin(arr), end(arr));
 </code></pre>
 
-<p>Infatti, dal C++11, la libreria standard contiene std::begin e std::end (e rispettive versioni <code>const</code> e reverse) che restituiscono l’equivalente di <code>container.begin()</code> e <code>container.end()</code> nel caso di container STL, ma sono in grado anche di restituire inizio e fine di un array nel caso di “array C”. Quindi, genericamente, è sempre meglio utilizzare le <strong>non-member begin/end</strong> anziché le corrispettive funzioni membro, proprio perché <strong>valide anche per gli array</strong>.</p>
+<p>Infatti, dal C++11, la libreria standard contiene <code>std::begin</code> e <code>std::end</code> (e rispettive versioni <code>const</code> e reverse) che restituiscono l’equivalente di <code>container.begin()</code> e <code>container.end()</code> nel caso di container STL, ma sono in grado anche di restituire inizio e fine di un array nel caso di “array C”. Quindi, genericamente, è sempre meglio utilizzare le <strong>non-member begin/end</strong> anziché le corrispettive funzioni membro, proprio perché <strong>valide anche per gli array</strong>.</p>
 
 <p>Non finisce qui.</p>
 
@@ -260,50 +264,50 @@ print(begin(v), begin(v)+4);
 print(begin(l), begin(l)+4);
 </code></pre>
 
-<p>Ma siamo meno fortunati e con clang otteniamo - tra gli altri - questo errore in testa:</p>
+<p>Ma siamo meno fortunati e con clang otteniamo - tra gli altri - questo errore:</p>
 
 <pre><code>error: invalid operands to binary expression ('decltype(__c.begin())' (aka '__list_iterator&lt;int, void *&gt;') and 'int')
 </code></pre>
 
-<p>Tradotto significa che l’iteratore di <code>list</code> non può essere “sommato” con un <code>int</code>. </p>
+<p>Tradotto significa che all’iteratore di <code>list</code> non possiamo sommare un intero. </p>
 
 <p>Dobbiamo allora introdurre un altro concetto importante legato agli iteratori C++, quello di <strong>categoria</strong>.</p>
 
-<p>In C++ gli iteratori hanno <strong>categorie</strong> diverse in base alla “classe di operazioni” che sanno fare. </p>
-
-<p>Esistono 6 categorie di iteratori C++ nella libreria standard:</p>
+<p>In C++ gli iteratori hanno <strong>categorie</strong> diverse in base alla “classe di operazioni” che sanno fare. Le classi di operazioni - appunto, <em>categorie</em> - sono stabilite dallo standard e sono 6:</p>
 
 <p><img src="https://sketch.io/render/sk-6036018089d22ea7ca21fa378327006c.jpeg" alt="enter image description here" title=""></p>
 
 <p>L’organizzazione di queste categorie non è casuale: ad eccezione della solitaria <code>OutputIterator</code>, le restanti sono visualizzate dalla più “potente” (<code>ContiguousIterator</code>) a quella meno (<code>InputIterator</code>). Una certa categoria è in grado di fare tutte le operazioni delle categorie inferiori nella gerarchia. Ad esempio, un <code>BidirectionalIterator</code> è in grado di:</p>
 
 <ul>
-<li>leggere (e.g. <code>*it</code>)</li>
-<li>incrementarsi (e.g. <code>++it</code>)</li>
-<li>incrementarsi con validità multi-passo</li>
-<li>decrementarsi (e.g. <code>--it</code>)</li>
+<li>leggere (e.g. <code>*it</code>);</li>
+<li>incrementarsi (e.g. <code>++it</code>);</li>
+<li>incrementarsi (con capacità <em>multi-passo</em>);</li>
+<li>decrementarsi (e.g. <code>--it</code>).</li>
 </ul>
 
-<p>Ma non supporta un accesso random (e.g. <code>it + N</code> o <code>it[N]</code>) né garantisce che lo storage riferito sia contiguo.</p>
+<p>Ma non è in grado di permettere un <em>accesso random</em> (e.g. <code>it + N</code> o <code>it[N]</code>) né garantisce che lo storage riferito sia contiguo.</p>
 
 <p>In questo modo, qualsiasi tipo che supporti le operazioni di una certa categoria potrà essere utilizzato come iteratore, garantendo (a compile-time) un certo set di funzionalità.</p>
 
-<p>Nel nostro esempio precedente, <em>list iterator</em> è un BidirectionalIterator e quindi non supporta un accesso randomico (e.g. <code>it + 4</code> non è supportato). Il C++ non implementa un accesso randomico su <code>list</code> perché non avrebbe costo costante: per raggiungere il nodo N-esimo, l’iteratore deve “muoversi” di N passi, facendo perdere la garanzia dell’accesso randomico (che è, appunto, costante).</p>
+<p>Nel nostro esempio precedente, <em>list iterator</em> è un <code>BidirectionalIterator</code> e quindi non supporta un accesso randomico (e.g. <code>it + 4</code> non è supportato). Il C++ non implementa un accesso randomico su <code>list</code> perché non avrebbe costo costante: per raggiungere il nodo N-esimo, l’iteratore deve spostarsi di N posizioni (e.g. <code>-&gt;next</code>), facendo perdere la garanzia dell’accesso randomico che è, invece, costante.</p>
 
 <p>Per ottenere lo stesso risultato potremmo fare:</p>
 
 <pre><code>list&lt;int&gt; l = {...};
-auto endIt = begin(l); ++endIt; ++endIt; ++endIt; ++endIt;
-print(begin(l), endIt);
+auto fourthEnd = begin(l); ++fourthEnd; ++fourthEnd; ++fourthEnd; ++fourthEnd;
+print(begin(l), fourthEnd);
 </code></pre>
 
-<p>Ma è molto scomodo. Possiamo usare allora funzione standard - <code>std::next</code> - in grado di restituirci un iteratore passato in input incrementato di N posizioni:</p>
+<p>Ma è molto scomodo. </p>
+
+<p>Possiamo usare allora funzione standard - <code>std::next</code> - in grado di restituirci un iteratore passato in input incrementato di N posizioni:</p>
 
 <pre><code>list&lt;int&gt; l = {...};
 print(begin(l), next(begin(l), 4));
 </code></pre>
 
-<p>La genericità della funzione garantisce che per iteratori che soddisfano la categoria <code>RandomAccess</code>, l’incremento sarà costante (+N), mentre per gli altri sarà in funzione di N (e.g. verrà fatto un ciclo di N iterazioni).</p>
+<p>La genericità della funzione garantisce che per iteratori che soddisfano la categoria <code>RandomAccess</code>, l’operazione sarà un costante <code>+N</code> sull’iteratore, mentre per gli altri sarà un’operazione funzione di N (e.g. verrà fatto un ciclo di N iterazioni).</p>
 
 <p>Ancora non è chiaro, però, quale sia il tipo da utilizzare nella nostra funzione <code>print</code>.</p>
 
@@ -313,14 +317,16 @@ print(begin(l), next(begin(l), 4));
 
 <p><img src="https://sketch.io/render/sk-19a3578ace0497103be9083c2d4b96c7.jpeg" alt="enter image description here" title=""></p>
 
-<p>Prima di capire che tipo passare alle nostre funzioni, vediamo un altro esempio interessante: la lettura dell’input. Abbiamo detto che possiamo usare qualsiasi tipo come iteratore, basta che soddisfi alcuni requisiti. Niente ci vieta, però, di utilizzare lo stesso meccanismo per nascondere altre “strutture” che non siano necessariamente containers. Se volessimo usare la nostra <code>print</code> per stampare gli elementi dello standard input? Possiamo farlo, perché in C++ esistono iteratori anche per leggere l’input:</p>
+<p>Prima di capire che tipo passare alle nostre funzioni, vediamo un altro esempio interessante: la lettura dell’input. Abbiamo detto che possiamo usare qualsiasi tipo come iteratore, basta che soddisfi alcuni requisiti. Niente ci vieta, però, di utilizzare lo stesso meccanismo per nascondere altre “strutture” che non siano necessariamente containers. </p>
+
+<p>Se volessimo usare la nostra <code>print</code> per stampare gli elementi dello standard input? Potremmo farlo perché in C++ esistono iteratori in grado di nascondere la lettura dello standard input:</p>
 
 <pre><code>print(istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;());
 </code></pre>
 
-<p>Un <a href="http://en.cppreference.com/w/cpp/iterator/istream_iterator">istream_iterator</a> leggere oggetti del tipo specificato, come se fossero letti per mezzo dell’<code>operator&gt;&gt;</code>.  Un <code>istream_iterator</code> default-costruito rappresenta “l’end iterator per gli stream”.</p>
+<p>Un <a href="http://en.cppreference.com/w/cpp/iterator/istream_iterator">istream_iterator</a> legge oggetti del tipo specificato, come se fossero letti per mezzo dell’<code>operator&gt;&gt;</code>.  Un <code>istream_iterator</code> default-costruito rappresenta “l’end iterator per gli stream”.</p>
 
-<p>E se oltre a leggere volessimo scrivere? Cioè, se avessimo una funzione che data una coppia di iteratori <code>begin, end</code> e un terzo iteratore <code>out</code> sia in grado di scrivere il contenuto del range <code>begin-end</code> a partire da <code>out</code>? Potremmo riscrivere la nostra print in questo modo:</p>
+<p>E se oltre a leggere volessimo scrivere? Cioè, se avessimo una funzione che data una coppia di iteratori <code>begin, end</code> e un terzo iteratore <code>out</code> fosse in grado di scrivere il contenuto del range <code>begin-end</code> a partire da <code>out</code>? Potremmo riscrivere la nostra print in questo modo:</p>
 
 <pre><code>void print(Iteratore begin, Iteratore end, Iteratore out)
 {
@@ -350,7 +356,7 @@ print(begin(l), next(begin(l), 4));
 }
 </code></pre>
 
-<p>Volendo stampare tutti gli elementi tra begin e end, sarà sufficiente usare un <a href="http://en.cppreference.com/w/cpp/iterator/ostream_iterator">ostream_iterator</a>, ovvero un iteratore di output che sappia operare su un <code>ostream</code>:</p>
+<p>Volendo stampare tutti gli elementi tra <code>begin</code> e <code>end</code>, sarà sufficiente usare un <a href="http://en.cppreference.com/w/cpp/iterator/ostream_iterator">ostream_iterator</a>, ovvero un iteratore di output che sappia operare su un <code>ostream</code>:</p>
 
 <pre><code>print(  istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;(), 
         ostream_iterator&lt;int&gt;(cout));
@@ -360,8 +366,6 @@ print(begin(l), next(begin(l), 4));
 
 <p>Diamo il benvenuto al nostro primo algoritmo.</p>
 
-
-
 <h2 id="algoritmi">Algoritmi</h2>
 
 <p>Un algoritmo è una funzione <strong>generica</strong> in grado di compiere una certa operazione su (almeno) un <strong>range</strong> di elementi, espresso come coppia di iteratori <code>[begin, end)</code>.</p>
@@ -370,7 +374,7 @@ print(begin(l), next(begin(l), 4));
 
 <p>Non siamo riusciti a trovare il tipo da dare ai nostri parametri “iteratori” perché abbiamo detto che qualsiasi tipo in grado di soddisfarne i requisiti è accettabile. La nostra print è capace di accettare vector e list iterators, ma anche array e stream iterators.</p>
 
-<p>Effettivamente non sappiamo che tipi accettare perché la nostra funzione è generica, cioè indipendente dal tipo utilizzato. A questo punto la risposta non può essere che una: usare dei parametri <strong>template</strong>:</p>
+<p>La risposta non può essere che una: usare dei parametri <strong>template</strong>:</p>
 
 <pre><code>template&lt;typename InputIt, typename OutputIt&gt;
 OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
@@ -380,8 +384,304 @@ OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
 
 <p>Convenzionalmente i nomi dei template richiamano quelli delle categorie di iteratori richiesti dalla funzione.</p>
 
+<p><strong>Un algoritmo non cambia mai il contenuto interno di un range</strong> perché non può sapere “cosa c’è sotto”. Ad esempio non è in grado di rimuovere elementi da un vettore. Nel seguito scopriremo quel è l’idioma per fare questo genere di operazioni.</p>
+
 <p>Esistono numerosissimi algoritmi nella standard library: <br>
 <a href="http://en.cppreference.com/w/cpp/algorithm">http://en.cppreference.com/w/cpp/algorithm</a></p>
 
-<p>Adesso ne scopriremo alcuni risolvendo qualcha programming challenge delle passate <a href="http://www.italiancpp.org/coding-gyms/">Coding Gyms</a>.</p></div></body>
+<p>Generalmente, ove possibile, è sempre meglio utilizzare un algoritmo standard rispetto a codice custom - <em>no raw loops</em>. Ecco perché:</p>
+
+<ul>
+<li><strong>efficienza</strong>: gli algoritmi spesso usano ottimizzazioni di basso livello (e.g. <code>std::copy</code> applicato a dei POD viene trasformata in <code>memcpy</code>);</li>
+<li><strong>correttezza</strong>: codice custom = possibilità di sbagliare;</li>
+<li><strong>manutenibilità</strong>: gli algoritmi sono <strong>standard</strong>, quindi chiari, hanno uno scope piccolo ma preciso e ben documentati;</li>
+<li><strong>componibilità</strong>: sarà più evidente con la standardizzazione dei <a href="https://github.com/ericniebler/range-v3">ranges</a>.</li>
+</ul>
+
+<p>Come tutte le cose, occorre fare <strong>pratica</strong> per conoscerli e prenderci confidenza. Conoscerli non significa solo saperli utilizzare ma anche <strong>saper riconoscere</strong> quando è il caso di utilizzarli.</p>
+
+<p>Oltre al lavoro quotidiano, un modo per applicarli è affrontare esercizi di competitive programming online (e.g. <a href="http://hackerrank.com">HackerRank</a>). </p>
+
+<p>Iniziamo, quindi, risolvendo qualche programming challenge.</p>
+
+<h2 id="challenges">Challenges</h2>
+
+
+
+<h3 id="simple-array-sum">Simple array sum</h3>
+
+<p><strong>Problema:</strong> data una sequenza di interi in input, stamparne la somma.  <br>
+<a href="https://www.hackerrank.com/challenges/simple-array-sum">Challenge su HackerRank</a></p>
+
+<p><strong>Step by step:</strong></p>
+
+<p>Partiamo dall’algoritmo scritto in precedenza:</p>
+
+<pre><code>void PrintSum(const vector&lt;int&gt;&amp; v)
+{
+    int sum = 0;
+    for (auto i=0u; i&lt;v.size(); ++i)
+       sum += v[i]; 
+    cout &lt;&lt; sum;
+}
+</code></pre>
+
+<p>La prima domanda da farsi è se esiste un algoritmo standard in grado di fare quello che ci serve.</p>
+
+<p>La risposta è sì: <a href="http://en.cppreference.com/w/cpp/algorithm/accumulate">std::accumulate</a>.</p>
+
+<p><code>std::accumulate</code> aggrega gli elementi di una sequenza utilizzando un’operazione binaria (di default la <strong>somma</strong>):</p>
+
+<pre><code>auto aggregatedValue = accumulate(begin, end, startValue);
+</code></pre>
+
+<p>Il nostro ciclo for può allora essere riscritto:</p>
+
+<pre><code>void PrintSum(const vector&lt;int&gt;&amp; v)
+{
+    cout &lt;&lt; accumulate(begin(v), end(v), 0);
+}
+</code></pre>
+
+<p>Ora non resta che leggere l’input in un <code>vector</code>. Il formato è molto semplice: il numero di elementi seguito dagli elementi separati da spazi:</p>
+
+<pre><code>5
+1 5 4 2 6
+</code></pre>
+
+<p>Ricordate come abbiamo usato <code>std::copy</code> in precedenza? Potremmo utilizzarlo allo stesso modo qui:</p>
+
+<pre><code>int n; cin &gt;&gt; N; // numero di elementi
+vector&lt;int&gt; n(N); // resize (mette tutti gli elementi a 0)
+copy(istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;(), begin(v))
+</code></pre>
+
+<p>Tuttavia, se il nostro esercizio richiedesse di leggere un secondo vettore, con questa tecnica leggeremmo tutti i numeri nel primo:</p>
+
+<pre><code>5
+1 5 4 2 6
+4
+1 2 3 4
+</code></pre>
+
+<p>In questo caso v dovrebbe contenere anche <code>4 1 2 3 4</code>, provocando un undefined behavior, tra l’altro, perché non c’è abbastanza spazio in v per ospitare anche questi elementi.</p>
+
+<p>Serve un modo per leggere esattamente <code>N</code> elementi in <code>v</code>. Siamo fortunati! Lo standard definisce una seconda versione di <code>copy</code> - <code>copy_n</code> - che permette di specificare il numero di elementi da copiare:</p>
+
+<pre><code>copy_n(istream_iterator&lt;int&gt;(cin), N, begin(v));
+</code></pre>
+
+<p><code>copy</code> e <code>copy_n</code> ignorano i separatori (default: spazi e ritorni a capo).</p>
+
+<p><strong>Domanda:</strong> abbiamo davvero bisogno di memorizzare l’input? Non possiamo semplicemente aggregare il range di elementi letti in input? Assolutamente sì:</p>
+
+<pre><code>accumulate(istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;(), 0);
+</code></pre>
+
+<p>Dobbiamo però tenere in considerazione che il primo elemento dell’input è ancora il numero di elementi <code>N</code>. Dobbiamo in qualche modo ignorarlo. Ci sono diversi modi per farlo ma forse il più elegante consiste semplicemente nel mandare avanti l’iteratore di input di una posizione usando <code>std::next</code>:</p>
+
+<pre><code>cout &lt;&lt; accumulate(next(istream_iterator&lt;int&gt;(cin)), istream_iterator&lt;int&gt;(), 0);
+</code></pre>
+
+
+
+<h3 id="camelcase">camelCase</h3>
+
+<p><strong>Problema</strong>: determinare il numero di parole di una stringa scritta con convenzione <em>camelCase</em>. <br>
+<a href="https://www.hackerrank.com/challenges/camelcase">Challenge su HackerRank</a></p>
+
+<p><strong>Step by step:</strong></p>
+
+<p>L’esercizio è molto semplice, per risolverlo basta contare il numero di lettere maiuscole e sommare 1 (la prima parola è scritta con iniziale minuscola). </p>
+
+<p>Supponendo di aver letto l’input come <code>string</code>, dobbiamo domandarci quale operazione fare per <strong>contare</strong> il numero di caratteri maiuscoli. Il verbo <strong>contare</strong> ci svela una <a href="http://en.cppreference.com/w/cpp/algorithm/count">coppia di algoritmi</a> standard che potrebbero fare al caso nostro: <code>count</code> e <code>count_if</code>.</p>
+
+<p><code>count</code> restituisce il numero di occorrenze di un elemento all’interno di un range, <code>count_if</code> fa la stessa cosa ma usa un predicato per determinare la condizione di conteggio. </p>
+
+<p>Nel nostro caso basterà utilizzare <code>count_if</code> personalizzando opportunamente la condizione. Entrano in gioco le <strong>lambda expressions</strong> per scrivere il nostro predicato inline:</p>
+
+<pre><code>[](char c) { return isupper(c); }
+</code></pre>
+
+<p><strong>Soluzione</strong>:</p>
+
+<pre><code>cout &lt;&lt; (count_if(istream_iterator&lt;char&gt;(cin), istream_iterator&lt;char&gt;(), [](char c){
+        return isupper(c);
+    })+1);
+</code></pre>
+
+
+
+<h3 id="missing-element">Missing element</h3>
+
+<p><strong>Problema</strong>: date due sequenze di elementi dove la seconda è identica alla prima a meno di un elemento mancante, trovare tale elemento mancante. L’ordine degli elementi delle due sequenze può essere differente.</p>
+
+<p>Questo esercizio ha diverse soluzioni.</p>
+
+<p>Il nostro approccio è lineare ed evita di fare integer overflow. Basterà fare uno <strong>xor</strong> delle due sequenze e poi fare lo xor dei risultati:</p>
+
+<pre><code>const auto bs_xor = accumulate(begin(baseline), end(baseline), 0, bit_xor&lt;&gt;());
+const auto ac_xor = accumulate(begin(actual), end(actual), 0, bit_xor&lt;&gt;());
+cout &lt;&lt; (bs_xor ^ ac_xor) &lt;&lt; endl; // the missing number
+</code></pre>
+
+<p><code>std::accumulate</code> è facilmente personalizzabile nell’operazione di aggregazione. In questo caso abbiamo usato <code>std::bit_xor</code>, uno <a href="http://en.cppreference.com/w/cpp/utility/functional">standard function object</a>. I function objects standard costituiscono, proprio come gli algoritmi, una - modesta - collezione di oggetti “chiamabili” con scopi ben precisi e documentati.</p>
+
+
+
+<h3 id="is-palindrome">Is Palindrome</h3>
+
+<p><strong>Problema</strong>: data una stringa determinare se è palindroma. Una stringa è palindroma se è identica a se stessa letta al contrario. Esempio: “abba”, “abcdcba”.</p>
+
+<p>La soluzione consiste nel verificare che la stringa sia identica da entrambi i versi. Possiamo partire da questa intuizione e scrivere:</p>
+
+<pre><code>string s; cin &gt;&gt; s;
+bool isPalindrome = true;
+for (auto i=0u; isPalindrome &amp;&amp; i&lt;s.size(); ++i)
+{
+  isPalindrome = (s[i] == s[s.size()-i-1])
+}
+cout &lt;&lt; (isPalindrome ? "YES" : "NO");
+</code></pre>
+
+<p>L’STL contiene un algoritmo <code>std::equal</code> che verifica l’uguaglianza di due range. Possiamo usarlo? Sì, ma dobbiamo trovare il modo di iterare “al contrario” sul secondo range.</p>
+
+<p>Quando abbiamo parlato degli iteratori ho solo accennato i <strong>reverse iterators</strong>: sono proprio come gli iteratori normali ma lavorano “al contrario”. Per i nostri scopi è sufficiente fare:</p>
+
+<pre><code>std::equal(begin(s), end(s), rbegin(s));
+</code></pre>
+
+<p>C’è una piccola osservazione da fare: la nostra soluzione è quasi perfetta, ci sono solo <code>N/2</code> controlli non necessari! Riflettiamoci:</p>
+
+<pre><code>s = "abcdcba"
+N = s.size(); // 7
+
+s[0] == s[N-1] ==&gt; s[6]
+s[1] == s[N-2] ==&gt; s[5]
+s[2] == s[N-3] ==&gt; s[4]
+s[3] == s[N-4] ==&gt; s[5]
+s[4] == s[N-5] ==&gt; s[2]
+s[5] == s[N-6] ==&gt; s[1]
+s[6] == s[N-7] ==&gt; s[0]
+</code></pre>
+
+<p>L’ultimo controllo utile è il quarto (<code>s[3] == s[5]</code>), i restanti sono tutti già stati fatti in precedenza. Dobbiamo modificare la nostra soluzione affinché questa ottimizzazione sia inclusa. Graficamente dobbiamo ottenere qualcosa del tipo:</p>
+
+<p><img src="https://sketch.io/render/sk-a7639be70c71c14a4a4cd06652f86a02.jpeg" alt="enter image description here" title=""></p>
+
+<p>Quindi l’end del nostro primo range dovrà essere posizionato esattamente a metà della stringa (<code>begin(s)+N/2</code>). Riportando questa ottimizzazione abbiamo:</p>
+
+<pre><code>std::equal(begin(s), begin(s)+s.size()/2, rbegin(s));
+</code></pre>
+
+<p>Oppure:</p>
+
+<pre><code>std::equal(begin(s), next(begin(s), s.size()/2), rbegin(s));
+</code></pre>
+
+
+
+<h3 id="starts-with">Starts with</h3>
+
+<p><strong>Problema</strong>: determinare se una <code>std::string</code> inizia con un dato prefisso.  <br>
+Esempio: <code>"www.conoscerelinux.org"</code> inizia con <code>"www."</code>.</p>
+
+<p>Per risolvere questo facile esercizio sarà sufficiente utilizzare la funzione <code>compare</code> di <code>std::string</code>:</p>
+
+<pre><code>auto startsWithPrefix = s.compare(0, prefix.size(), prefix) == 0;
+</code></pre>
+
+
+
+<h3 id="alternating-characters">Alternating Characters</h3>
+
+<p><strong>Problema</strong>:  data una stringa trovare il numero minimo di caratteri da rimuovere in modo che non esistano caratteri <strong>adiacenti</strong> uguali nella stringa. <br>
+Esempio: <code>"ABAA"</code>, 1 (basta rimuovere una delle due <code>'A'</code> alla fine). <br>
+<a href="https://www.hackerrank.com/challenges/alternating-characters">Challenge su HackerRank</a></p>
+
+<p>Il modo tradizionale per risolvere questo esercizio consiste nel contare quante volte due caratteri adiacenti sono uguali:</p>
+
+<pre><code>string s;
+cin &gt;&gt; s;
+auto cnt = 0;
+for (auto i=1; i&lt;s.size(); ++i)
+{
+    if (s[i]==s[i-1])
+        cnt++;
+}
+cout &lt;&lt; cnt;  
+</code></pre>
+
+<p>Questo esercizio ci dà la possibilità di scrivere altre due soluzioni molto compatte interamente basate sui flessibili algoritmi della standard library.</p>
+
+<p>La prima segue esattamente lo stesso ragionamento del codice scritto sopra, ma fa uso di un algoritmo standard. Facciamo un disegno di quello che fa il codice:</p>
+
+<p><img src="https://sketch.io/render/sk-28edab033d736d1b8d76ef1edffcd393.jpeg" alt="enter image description here" title=""></p>
+
+<p>L’iterazione sulla stringa avviene in modo che <strong>coppie</strong> di elementi adiacenti vengano confrontate. Visualizziamo l’algoritmo da un’altra punto di vista:</p>
+
+<p><img src="https://sketch.io/render/sk-826b4f74a78d5b5d1d306994281b7b05.jpeg" alt="enter image description here" title=""></p>
+
+<p>La seconda stringa è la prima traslata in avanti di una posizione. Da questo punto vista il problema diventa: contare il numero di coppie uguali. Potremmo usare <code>count_if</code> se lo standard ci desse la possibilità di creare una sorta di <em>adjacent_element_iterator</em>. Se dovessimo solo verificare che tutte le coppie siano uguali, potremmo usare <code>std::equal</code>, passando come secondo range il primo mosso di una posizione in avanti. </p>
+
+<p>Dobbiamo invece sommare le coppie uguali. In questo algoritmo sono coinvolte due operazioni:</p>
+
+<ul>
+<li>confrontare ogni coppia</li>
+<li>sommare ogni risultato del confronto</li>
+</ul>
+
+<p>Supponiamo di avere dei numeri invece dei caratteri:</p>
+
+<pre><code>  1 2 3 4 5
+1 2 3 4 5
+</code></pre>
+
+<p>E supponiamo di avere un prodotto invece di un confronto:</p>
+
+<pre><code>res = 1*2 + 2*3 + 3*4 + 4*5
+</code></pre>
+
+<p>Assomiglia molto ad un <strong>prodotto scalare</strong> (dot product o, ancora, prodotto interno). Nella libreria standard esiste un algoritmo chiamato inner_product che fa esattamente questa operazione. La flessibilità è tale che le funzioni “somma” e “prodotto” possono essere personalizzate. In questo modo possiamo facilmente utilizzare il “confronto” al posto del prodotto e il gioco e fatto:</p>
+
+<pre><code>cin &gt;&gt; s;
+cout &lt;&lt; inner_product(begin(s), end(s)-1, next(begin(s)), 0, plus&lt;&gt;(), equal_to&lt;&gt;());
+</code></pre>
+
+<p>L’altra soluzione si basa su un altro concetto: supponiamo non soltanto di contare i caratteri adiacenti uguali, ma anche di rimuoverli dalla stringa. Quando abbiamo introdotto gli algoritmi abbiamo lasciato in sospeso un concetto: un algoritmo non può alterare il contenuto interno di un container, tuttavia nello standard esistono funzioni come <code>remove</code> e <code>remove_if</code>. Cosa fanno? A cosa servono?</p>
+
+<p>Servono a fare quello che pensiamo, cioè a rimuovere elementi, ma non li rimuovono “fisicamente” dal range, li “spostano” solamente. In poche gli elementi che soddisfano la condizione passata a <code>remove_if</code> vengono sovrascritti da quelli successivi che invece vanno tenuti, creando così dei “buchi” in fondo al range. </p>
+
+<p>Esempio: dobbiamo rimuovere gli elementi più grandi di 14 da questo vettore:</p>
+
+<p><img src="https://sketch.io/render/sk-64756742f0f5ccf6e859c8ec2e1e2254.jpeg" alt="enter image description here" title=""></p>
+
+<p><code>remove_if</code> sovrascrive (tecnicamente fa un move-assign, se possibile, altrimenti un’assegnazione) gli elementi da eliminare con quelli validi:</p>
+
+<p><img src="https://sketch.io/render/sk-9b6ba092ec11667ba5562ed73d945364.jpeg" alt="enter image description here" title=""></p>
+
+<p>Si creeranno, quindi, dei buchi in fondo al vettore. Quei buchi saranno da eliminare fisicamente dal vettore. Un compito che solo il vettore stesso sa svolgere, perché conosce i suoi dettagli implementativi:</p>
+
+<pre><code>auto beginGarbage = remove_if(begin(v), end(v), [](int i) { return i&gt;14; });
+v.erase(beginGarbage, end(v));
+</code></pre>
+
+<p>Or, idiomatically:</p>
+
+<pre><code>v.erase(remove_if(begin(v), end(v), [](int i) { return i&gt;14; }), end(v));
+</code></pre>
+
+<p><code>vector::erase</code> ha un overload che dato un (proprio) range lo cancella (gli oggetti vengono deallocati).</p>
+
+<p><code>remove</code> e <code>remove_if</code> non sono gli unici algoritmi che hanno questa particolarità. Analogo è <code>unique</code> che “rimuove” i duplicati <strong>adiacenti</strong> di un range. Tramite unique si può scrivere un’altra soluzione:</p>
+
+<pre><code>cin &gt;&gt; s;
+cout &lt;&lt; distance(unique(begin(s), end(s)), end(s)) &lt;&lt; endl;
+</code></pre>
+
+<p><code>unique</code>, proprio come <code>remove_if</code>, ritorna un iteratore a quella che rappresenterà la “nuova fine” del range. In questo caso non ci serve rimuovere fisicamente i “buchi”, ma ci basta contare quanti sono. Questo numero coincide col numero di caratteri duplicati. Per calcolarlo è sufficiente misurare la distanza tra la nuova fine della stringa e quella corrente:</p>
+
+<p><img src="https://sketch.io/render/sk-e1b58382ef290060511f1c7f00c32973.jpeg" alt="enter image description here" title=""></p>
+
+<p><em>Marco Arena, Ultima modifica: 29 Aprile 2017</em></p></div></body>
 </html>
