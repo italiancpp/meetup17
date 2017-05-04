@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iterators, containers and algorithms</title>
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><h1 id="main">Iterators, containers and algorithms</h1>
+
+<p>The C++ Standard Library includes the <em>Standard Template Library</em> (<strong>STL</strong>), that is a collection of  generic algorithms, data structures (containers) and iterators. <br>
+Although STL and Standard Library are formally different things, C++ programmers generally consider STL and Standard Library as the same thing. Practically speaking, the Standard Library has been developed following the design principles of the STL.</p>
+
+<p>In the following article we'll use the terms "STL" and "Standard Library" referring to the same thing.</p>
+
+<p>Today we'll meet <strong>the triad</strong> of the STL: <em>iterators</em>, <em>containers</em> and <em>algorithms</em>.</p>
+
+<p><div class="toc">
+<ul>
+<li><a href="#main">Iterators, containers and algorithms</a><ul>
+<li><a href="#containers">Containers</a><ul>
+<li><a href="#example-1">An example: sum of a sequence</a></li>
+</ul>
+</li>
+<li><a href="#iterators">Iterators</a></li>
+<li><a href="#algorithms">Algorithms</a></li>
+<li><a href="#challenges">Challenges</a><ul>
+<li><a href="#simple-array-sum">Simple array sum</a></li>
+<li><a href="#camelcase">camelCase</a></li>
+<li><a href="#missing-element">Missing element</a></li>
+<li><a href="#is-palindrome">Is Palindrome</a></li>
+<li><a href="#starts-with">Starts with</a></li>
+<li><a href="#alternating-characters">Alternating Characters</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</p>
+
+<h2 id="containers">Containers</h2>
+
+<p>A container is a <strong>generic</strong> class which implements a certain data structure. <br>
+Reference: <a href="http://en.cppreference.com/w/cpp/container">http://en.cppreference.com/w/cpp/container</a></p>
+
+<p>A container:</p>
+
+<ul>
+<li>is <strong>generic</strong>, meaning that it works on whatever data type satisfying certain basic <strong>requirements</strong> (formally: <strong>Concepts</strong>) needed by the container (not satisfying is formally <em>undefined behavior</em> - generally the compiler complains);</li>
+<li><strong>manages</strong> the <strong>storage</strong> (the memory);</li>
+<li>satisfies some <strong>requirements</strong> (<strong>Concepts</strong>);</li>
+<li>provies some <strong>functions</strong> to operate on the stored elements and on itself.</li>
+</ul>
+
+<p>The basic <em>Concept</em> that every container has to implement is, just, <a href="http://en.cppreference.com/w/cpp/concept/Container">Container</a>. On top of this, containers can implement others. For instance:</p>
+
+<pre><code>vector&lt;T&gt;
+</code></pre>
+
+<p>Is also a <em>ContiguousContainer</em> (fino al C++14 si arrivava fino a <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer">SequenceContainer</a>), <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer">ReversibleContainer</a> e <a href="http://en.cppreference.com/w/cpp/concept/AllocatorAwareContainer">AllocatorAwareContainer</a>.</p>
+
+<p>In the STL, containers are categorized as:</p>
+
+<ul>
+<li>Sequence containers (some are also <em>contiguous</em>)</li>
+<li>Associative containers</li>
+<li>Unordered associative containers</li>
+<li>Container adaptors</li>
+</ul>
+
+<p>Every container stores and manages objects of a certain type. Ad esempio:</p>
+
+<pre><code>vector&lt;int&gt;
+</code></pre>
+
+<p>Contains <code>int</code> values. This type is called <strong>underlying type</strong> and can be accessed through:</p>
+
+<pre><code>vector&lt;int&gt;::value_type
+</code></pre>
+
+<p><strong>Every container provies such </strong> <code>value_type</code> because the concept <a href="http://en.cppreference.com/w/cpp/concept/Container">Container</a> requires such type definition.</p>
+
+<p>Examples:</p>
+
+<pre><code>string s; // typedef per basic_string&lt;char&gt;
+vector&lt;int&gt; v;
+</code></pre>
+
+<p>T, to be used as underlying type, <strong>has to implement some requirements</strong> (concepts) that can vary from container to container. Some depend also on the operations the user is going to perform with the container. For example, you can use a vector with moveable type that is not copyable as far as you don't try to copy the container.</p>
+
+<p>The basic requirement that a type has to implement to be used into any standard container is <a href="http://en.cppreference.com/w/cpp/concept/Erasable">Erasable</a>, that is the possibility to be erased through a certain allocator. By default (by using std::allocator) this means that the underlying type has a public destructor.</p>
+
+<h3 id="example-1">An example: sum of a sequence</h3>
+
+<p>Let's meet <code>std::vector</code>: we have to print the sum of the elements of a sequence.</p>
+
+<p><code>std::vector</code> is likely the simplest data structure to use for this task, it's just kind of a dynamic array:</p>
+
+<pre><code>void PrintSum(const vector&lt;int&gt;&amp; v)
+{
+    int sum = 0;
+    for (auto i=0u; i&lt;v.size(); ++i)
+       sum += v[i]; // elemento in posizione i (0-based)
+    cout &lt;&lt; sum;
+}
+</code></pre>
+
+<p>We used:</p>
+
+<ul>
+<li><code>size()</code>, to have back the numbero of elements really contained,</li>
+<li><code>operator[i]</code>, to have back a <em>reference</em> to ith stored element.</li>
+</ul>
+
+<p>Some important facts about <code>std::vector</code>:</p>
+
+<ul>
+<li>guarantees a <strong>contiguous storage</strong> (we can even access such storage by pointer - e.g. to pass it to a C API);</li>
+<li>manages automatically the <strong>length</strong> (<em>size</em>) and the <strong>capacity</strong> (<em>capacity</em>) of the storage;</li>
+<li>it's possible to both preallocate (<code>reserve</code>) and preinitialize (<code>resize</code>) a vector;</li>
+<li>adding an element to a vector <em>may</em> result in <strong>relocating</strong> its elements (to maintain the contiguity);</li>
+</ul>
+
+<p>Let's say we want to replace <code>std::vector</code> with <code>std::list</code>, that is a doubly linked list, providing insertions and removals in constant time:</p>
+
+<pre><code>void PrintSum(const list&lt;int&gt;&amp; l)
+{
+    int sum = 0;
+    for (auto i=0u; i&lt;l.size(); ++i)
+       sum += l[i]; // ?
+    cout &lt;&lt; sum;
+}
+</code></pre>
+
+<p>GCC complains:</p>
+
+<pre><code>prog.cc:46:20: error: no match for 'operator[]' (operand types are 'const std::__cxx11::list&lt;int&gt;' and 'int')
+            sum += l[i]; // ?
+</code></pre>
+
+<p>Basically, <code>list</code> is not providing operator[] as <code>vector</code>.</p>
+
+<p>To understand how to access list, we need to introduce the second element of the triad: the <strong>iterator</strong>.</p>
+
+<h2 id="iterators">Iterators</h2>
+
+<p>An iterator is an object which hides how (the internal details) to iterate and access the elements on a certain data structure.</p>
+
+<p><img src="https://sketch.io/render/sk-b9bc1861e442a04b88896b2a8d187725.jpeg" alt="enter image description here" title=""></p>
+
+<p>Is it possible to print every element of the data structure above by using the same syntax?</p>
+
+<p>Ideally, we'd like writing:</p>
+
+<pre><code>void print(iterator it)
+{
+    while (it.hasNext())
+        cout &lt;&lt; it.Next();
+}
+</code></pre>
+
+<p>First of all, in C++ we always pass two iterators to identify a range of elements:</p>
+
+<pre><code>void print(iterator begin, iterator end)
+{
+    while (begin != end)
+        ...
+}
+</code></pre>
+
+<p><code>[begin, end)</code> is a <strong>half open range</strong>, that is elements are from begin to <strong>end</strong> excluded. For example, for a <code>vector</code>:</p>
+
+<p><img src="https://sketch.io/render/sk-5c175e12f12ddebae18fe85f6b86d9b1.jpeg" alt="enter image description here" title=""></p>
+
+<p>Advantages are mainly two:</p>
+
+<ul>
+<li>no special case for the empty range (<code>begin</code> is equal to <code>end</code> in this case);</li>
+<li>loop termination condition is simply <code>begin != end</code>.</li>
+</ul>
+
+<p>Considering the previous picture, to print only the first 4 elements of the vector, here is the <code>begin, end</code> pair to pass to <code>print</code>:</p>
+
+<p><img src="https://sketch.io/render/sk-222512208731e21e8cd26b77b16121b2.jpeg" alt="enter image description here" title=""></p>
+
+<p>STL containers make it easy to obtain the begin and the end iterators through <code>begin()</code> and <code>end()</code> member functions:</p>
+
+<pre><code>vector&lt;int&gt; v = {...};
+print(v.begin(), v.end());
+</code></pre>
+
+<p>To put our <code>print</code> in production, we have to understand how we can access the underlying element of an iterator and how to move the iterator forward</p>
+
+<p>Iterator syntax is similar to pointers syntax</p>
+
+<p>To obtain a reference to the underlying element, we <strong>dereference</strong> the iterator:</p>
+
+<pre><code>auto&amp; value = *it;
+</code></pre>
+
+<p>To move the iterator forward by one position, we <strong>increment</strong> the iterator:</p>
+
+<pre><code>++it; // oppure it++
+</code></pre>
+
+<p>The difference between <strong>pre-increment</strong> (<code>++it</code>) and <strong>post-increment</strong> (<code>it++</code>) is subtle: in the latter case, the operator++ returns a copy to the iterator before the move.</p>
+
+<p>Let's complete the function <code>print</code>:</p>
+
+<pre><code>void print(iterator begin, iterator end)
+{
+    while (begin != end)
+    {
+        cout &lt;&lt; *begin;
+        ++begin;
+    }
+}
+</code></pre>
+
+<p>In C++, an iterator can be any type <em>behaving as an iterator</em>. We can pass to <code>print</code>, any object supporting:</p>
+
+<ul>
+<li>an operator to compare - <code>!=</code>;</li>
+<li>an operator to dereference - <code>*</code>;</li>
+<li>an operator to increment - <code>++</code>.</li>
+</ul>
+
+<p>Actually, we can even use a couple of plain pointers:</p>
+
+<pre><code>int arr[] = {1,2,3};
+print(arr, arr + 3);
+</code></pre>
+
+<p>Idiomatically in C++ we write:</p>
+
+<pre><code>print(begin(arr), end(arr));
+</code></pre>
+
+<p>Since C++11, the STL has provided <code>std::begin</code> and <code>std::end</code> (and const/reverse variants) that for a standard container is exactly <code>container.begin()</code> and <code>container.end()</code>, but they also work with C arrays. It's always preferred to use the <strong>non-member version of begin/end</strong> rather than the corresponding member functions, just because they are more generic.</p>
+
+<p>Let's print the first four elements, again:</p>
+
+<p><img src="https://sketch.io/render/sk-222512208731e21e8cd26b77b16121b2.jpeg" alt="enter image description here" title=""></p>
+
+<p>Remembering C pointers arithmetic, we try:</p>
+
+<pre><code>vector&lt;int&gt; v = {...};
+print(begin(v), begin(v)+4);
+</code></pre>
+
+<p>And it works!</p>
+
+<p>We try with <code>list</code>:</p>
+
+<pre><code>list&lt;int&gt; l = {...};
+print(begin(l), begin(l)+4);
+</code></pre>
+
+<p>However we get:</p>
+
+<pre><code>error: invalid operands to binary expression ('decltype(__c.begin())' (aka '__list_iterator&lt;int, void *&gt;') and 'int')
+</code></pre>
+
+<p>It means that <code>list</code> iterator cannot be added to an int.</p>
+
+<p>It's time to introduce another important idea behind standard iterators: the <strong>iterator category</strong>.</p>
+
+<p>In C++ iterators have different <strong>categories</strong> depending on the “class of operations” they are able to do. Such <em>categories</em> are stated by the standard:</p>
+
+<p><img src="https://sketch.io/render/sk-6036018089d22ea7ca21fa378327006c.jpeg" alt="enter image description here" title=""></p>
+
+<p>The organization of the categories in the image above is not accidental: apart from <code>OutputIterator</code>, the others are displayed from the most “powerful” (<code>ContiguousIterator</code>) to the least (<code>InputIterator</code>). An iterator of a certain category provides the whole set of operations of the lower categories. For instance, a <code>BidirectionalIterator</code> can be:</p>
+
+<ul>
+<li>read (e.g. <code>*it</code>);</li>
+<li>incremented (e.g. <code>++it</code>);</li>
+<li>decremented (e.g. <code>--it</code>).</li>
+</ul>
+
+<p>However, it does not provide <em>random access</em> (e.g. <code>it + N</code> or <code>it[N]</code>) nor it can guarantee that it will store elements contiguously.</p>
+
+<p>This way, any type supporting operations of a certain category can be used as an iterator.</p>
+
+<p>In our previous example, <em>list iterator</em> is not a <code>BidirectionalIterator</code> and so it cannot be randomically accessed (e.g. <code>it + 4</code> is not supported). Note: it does not make sense to support such operation because moving a list iterator by N positions requires N steps, that is a linear time. Instead, random access should be constant.</p>
+
+<p>To have the same result we can do:</p>
+
+<pre><code>list&lt;int&gt; l = {...};
+auto fourthEnd = begin(l); ++fourthEnd; ++fourthEnd; ++fourthEnd; ++fourthEnd;
+print(begin(l), fourthEnd);
+</code></pre>
+
+<p>However, it's not very handy.</p>
+
+<p>Let's resort to the standard and use <code>std::next</code>, that will return a given iterator incremented by N steps:</p>
+
+<pre><code>list&lt;int&gt; l = {...};
+print(begin(l), next(begin(l), 4));
+</code></pre>
+
+<p>If an iterator is <code>RandomAccess</code>, such operation just does <code>+N</code> on the iterator, whereas it will end up with incrementing the iterator N times in the other cases.</p>
+
+<p>We are stating that any type able to provide a certain iterator category operations can be used as an iterator of that category. Functions will “expect” on categories rather than on types. For our <code>print</code> an <code>InputIterator</code> is enough because we just need to access the range in a single pass.</p>
+
+<p>Other functions may have higher requirements. For instance, a binary search (e.g. <code>std::binary_search</code>, <code>std::lower_bound</code>) requires a <code>ForwardIterator</code> because the algorithm operates in a multi-pass fashion (e.g. reading an element at position <code>i</code> may also require to step back and read an element at position <code>i-j</code>): </p>
+
+<p><img src="https://sketch.io/render/sk-19a3578ace0497103be9083c2d4b96c7.jpeg" alt="enter image description here" title=""></p>
+
+<p>Another interesting example consists in reading the standard input. The principle is very simple and is consistent with the philosophy of the STL: we can still use iterators that will hide the standard input instead of a container:</p>
+
+<pre><code>print(istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;());
+</code></pre>
+
+<p>An <a href="http://en.cppreference.com/w/cpp/iterator/istream_iterator">istream_iterator</a> reads successive objects of type T from the <code>std::basic_istream</code> object for which it was constructed, by calling the appropriate <code>operator>></code>. The default-constructed <code>std::istream_iterator</code> is the end-of-stream iterator.</p>
+
+<p>Now, let's say we want to write to another stream, not <code>cout</code> by default. We can redesign our function this way:</p>
+
+<pre><code>void print(Iterator begin, Iterator end, Iterator out)
+{
+    while (begin != end)
+    {
+        *out = *begin;
+        ++begin;
+        ++out;
+    }           
+}
+</code></pre>
+
+<p>Reading carefully, we realize that the expression <code>*it = o</code> is not required on <code>InputIterator</code> category. Instead, we should expect that <code>out</code> is an <a href="http://en.cppreference.com/w/cpp/concept/OutputIterator">OutputIterator</a>:</p>
+
+<pre><code>void print(InputIterator begin, InputIterator end, OutputIterator out)
+{
+    while (begin != end)
+    {
+        *out = *begin;
+        ++begin;
+        ++out;
+    }
+}
+</code></pre>
+
+<p>Let's use an <a href="http://en.cppreference.com/w/cpp/iterator/ostream_iterator">ostream_iterator</a>, to emulate what we were doing before this refactoring:</p>
+
+<pre><code>print(  istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;(), 
+        ostream_iterator&lt;int&gt;(cout));
+</code></pre>
+
+<p>The name <em>print</em> is wrong. This function is able to do something more generic: it <strong>copies</strong> a range <code>begin</code>, <code>end</code> starting from <code>out</code>. The standard library already provides <code>std::copy</code>. </p>
+
+<p>Give a warm welcome to our first algorithm.</p>
+
+<h2 id="algorithms">Algorithms</h2>
+
+<p>An algorithm is a <strong>generic</strong> function doing a certain operation on (at least) a <strong>range</strong> of elements <code>[begin, end)</code>.</p>
+
+<p>Now we can unveal the type of an iterator: it's basically a <strong>template</strong>:</p>
+
+<pre><code>template&lt;typename InputIt, typename OutputIt&gt;
+OutputIt copy(InputIt first, InputIt last, OutputIt d_first);
+</code></pre>
+
+<p>By convention, the STL gives names to template parameters as the names of the required categories.</p>
+
+<p>An algorithm never changes the storage of a containers, clearly because it ignores what's underlying a iterators range. Afterward we'll understand the idioms to combine algorithms and mutable operations like removing elements.</p>
+
+<p>The STL provides several algorithms: <br>
+<a href="http://en.cppreference.com/w/cpp/algorithm">http://en.cppreference.com/w/cpp/algorithm</a></p>
+
+<p>Why it's preferable to use an algorithm instead of a hand-made for loop:</p>
+
+<ul>
+<li><strong>efficiency</strong>: algorithms can easily employ low-level optimizations (e.g. <code>std::copy</code> on PODs is actually a <code>memcpy</code>);</li>
+<li><strong>correctness</strong>: custom code comes with more opportunities to make mistakes;</li>
+<li><strong>maintainability</strong>: algorithms are <strong>standard</strong>. This means: well-known and scoped;</li>
+<li><strong>composability</strong>: you can combine more algorithms in one call. This will be even more clear with <a href="https://github.com/ericniebler/range-v3">ranges</a> in C++20. Start using standard algorithms today will make it easier to exploit the whole power and flexibility of ranges tomorrow.</li>
+</ul>
+
+<p>To get familiar and fluent with algorithms you should practice with them.</p>
+
+<p>Apart from our daily job, competitive programming gives such opportunity (e.g. <a href="http://hackerrank.com">HackerRank</a>). </p>
+
+<h2 id="challenges">Challenges</h2>
+
+<h3 id="simple-array-sum">Simple array sum</h3>
+
+<p><strong>Problem:</strong> given a sequence in input, print its sum.  <br>
+<a href="https://www.hackerrank.com/challenges/simple-array-sum">Challenge on HackerRank</a></p>
+
+<p><strong>Step by step:</strong></p>
+
+<p>Let's start from a previous example we coded:</p>
+
+<pre><code>void PrintSum(const vector&lt;int&gt;&amp; v)
+{
+    int sum = 0;
+    for (auto i=0u; i&lt;v.size(); ++i)
+       sum += v[i]; 
+    cout &lt;&lt; sum;
+}
+</code></pre>
+
+<p>First question to answer: does it exist a standard algorithm doing what we are crafting by hand?</p>
+
+<p>Yes: <a href="http://en.cppreference.com/w/cpp/algorithm/accumulate">std::accumulate</a>.</p>
+
+<p><code>std::accumulate</code> aggregates a sequence by using a binary operation (by default is the simple <strong>sum</strong>):</p>
+
+<pre><code>auto aggregatedValue = accumulate(begin, end, startValue);
+</code></pre>
+
+<p>We can replace our loop with accumulate:</p>
+
+<pre><code>void PrintSum(const vector&lt;int&gt;&amp; v)
+{
+    cout &lt;&lt; accumulate(begin(v), end(v), 0);
+}
+</code></pre>
+
+<p>Now we should read the <code>vector</code> from the standard input. The input format is trivial: first we get the number of elements, then the elements space-separated:</p>
+
+<pre><code>5
+1 5 4 2 6
+</code></pre>
+
+<p>We can use <code>std::copy</code>, as we did before:</p>
+
+<pre><code>int n; cin &gt;&gt; N; // numero di elementi
+vector&lt;int&gt; n(N); // resize (mette tutti gli elementi a 0)
+copy(istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;(), begin(v))
+</code></pre>
+
+<p>However, what if our exercise required to read another vector? E.g.:</p>
+
+<pre><code>5
+1 5 4 2 6
+4
+1 2 3 4
+</code></pre>
+
+<p>Our code won't work. We should bound to N our read (copy) operation.</p>
+
+<p>The standard provides a second version of <code>copy</code> that does what we need, <code>copy_n</code>:</p>
+
+<pre><code>copy_n(istream_iterator&lt;int&gt;(cin), N, begin(v));
+</code></pre>
+
+<p><code>copy</code> and <code>copy_n</code> skips the separators (by default: spaces and carriage returns).</p>
+
+<p>Another improvement consists in not reading the input at all. We can actually just use accumulate on istream iterators:/p>
+
+<pre><code>accumulate(istream_iterator&lt;int&gt;(cin), istream_iterator&lt;int&gt;(), 0);
+</code></pre>
+
+<p>However, we should skip the first number, that is the size of the vector that will be passed. A simple way to do that consists in using <code>std::next</code>:</p>
+
+<pre><code>cout &lt;&lt; accumulate(next(istream_iterator&lt;int&gt;(cin)), istream_iterator&lt;int&gt;(), 0);
+</code></pre>
+
+
+
+<h3 id="camelcase">camelCase</h3>
+
+<p><strong>Problem</strong>: count the number of words in a string written in <em>camelCase</em>. <br>
+<a href="https://www.hackerrank.com/challenges/camelcase">Challenge on HackerRank</a></p>
+
+<p><strong>Step by step:</strong></p>
+
+<p>We should <strong>count</strong> the number of uppercase letters and then sum 1 (the first is lowercase).</p>
+
+<p><strong>counting</strong> means that we can try employing <a href="http://en.cppreference.com/w/cpp/algorithm/count">these ones</a>: <code>count</code> and <code>count_if</code>.</p>
+
+<p><code>count</code> returns the number of occurrences of an element in a certain range, <code>count_if</code> returns the number of elements for which a certain predicate is true.</p>
+
+<p>We can use <code>count_if</code> returning true if a letter is uppercase. Let's use a <strong>lambda expression</strong> to define our predicate inline:</p>
+
+<pre><code>[](char c) { return isupper(c); }
+</code></pre>
+
+<p><strong>Solution</strong>:</p>
+
+<pre><code>cout &lt;&lt; (count_if(istream_iterator&lt;char&gt;(cin), istream_iterator&lt;char&gt;(), [](char c){
+        return isupper(c);
+    })+1);
+</code></pre>
+
+
+
+<h3 id="missing-element">Missing element</h3>
+
+<p><strong>Problem</strong>: given two sequences, the second is the same as the first except for one element. Find such element.</p>
+
+<p>There are many solutions.</p>
+
+<p>We use a xor operations to avoid both additional storage and possible interger overflow:</p>
+
+<pre><code>const auto bs_xor = accumulate(begin(baseline), end(baseline), 0, bit_xor&lt;&gt;());
+const auto ac_xor = accumulate(begin(actual), end(actual), 0, bit_xor&lt;&gt;());
+cout &lt;&lt; (bs_xor ^ ac_xor) &lt;&lt; endl; // the missing number
+</code></pre>
+
+<p><code>std::accumulate</code> is flexible enough to allow custom aggregate operations. We used <code>std::bit_xor</code>, a <a href="http://en.cppreference.com/w/cpp/utility/functional">standard function object</a>. Standard function objects are, just like algorithms, a - simple - collection of well-known and scoped “callable” objects.</p>
+
+<h3 id="is-palindrome">Is Palindrome</h3>
+
+<p><strong>Problem</strong>: given a string, determine if it's palindrome.</p>
+
+<p>We can verify if the string is the same as itself read in the opposite direction:</p>
+
+<pre><code>string s; cin &gt;&gt; s;
+bool isPalindrome = true;
+for (auto i=0u; isPalindrome &amp;&amp; i&lt;s.size(); ++i)
+{
+  isPalindrome = (s[i] == s[s.size()-i-1])
+}
+cout &lt;&lt; (isPalindrome ? "YES" : "NO");
+</code></pre>
+
+<p>The STL provides <code>std::equal</code> which verifies if two ranges are the same. We can use it as far as we understand how to pass iterate the string the other way.</p>
+
+<p>Normal iterators can have counterparts called <strong>reverse iterators</strong>. They enable us to iterate ranges in the opposite direction:</p>
+
+<pre><code>std::equal(begin(s), end(s), rbegin(s));
+</code></pre>
+
+<p>This solution is still not perfect. Let's analyse our comparisons one by one:</p>
+
+<pre><code>s = "abcdcba"
+N = s.size(); // 7
+
+s[0] == s[N-1] ==&gt; s[6]
+s[1] == s[N-2] ==&gt; s[5]
+s[2] == s[N-3] ==&gt; s[4]
+s[3] == s[N-4] ==&gt; s[5]
+s[4] == s[N-5] ==&gt; s[2]
+s[5] == s[N-6] ==&gt; s[1]
+s[6] == s[N-7] ==&gt; s[0]
+</code></pre>
+
+<p><code>s[3] == s[5]</code> is the last mandatory control, the others have already been performed. We should do something like:</p>
+
+<p><img src="https://sketch.io/render/sk-a7639be70c71c14a4a4cd06652f86a02.jpeg" alt="enter image description here" title=""></p>
+
+<p>We should verify only the first <code>begin(s)+N/2</code> elements:</p>
+
+<pre><code>std::equal(begin(s), begin(s)+s.size()/2, rbegin(s));
+</code></pre>
+
+<p>Or, similarly:</p>
+
+<pre><code>std::equal(begin(s), next(begin(s), s.size()/2), rbegin(s));
+</code></pre>
+
+
+
+<h3 id="starts-with">Starts with</h3>
+
+<p><strong>Problem</strong>: determine if a <code>std::string</code> starts with another given string (a prefix). <br/>
+Example: <code>"www.conoscerelinux.org"</code> starts with <code>"www."</code>? Yes.</p>
+
+<p>This exercise gives us an opportunity to meet <code>std::string</code> functions like:</p>
+
+<pre><code>auto startsWithPrefix = s.compare(0, prefix.size(), prefix) == 0;
+</code></pre>
+
+<h3 id="alternating-characters">Alternating Characters</h3>
+
+<p><strong>Problem</strong>: given a string, find the minimum amount of characters to remove such that the string does not contain equal adjacent characters anymore.<br>
+Example: <code>"ABAA"</code>, 1 (just remove one <code>'A'</code> at the end). <br>
+<a href="https://www.hackerrank.com/challenges/alternating-characters">Challenge on HackerRank</a></p>
+
+<p>We can just use how many adjacent characters are equal:</p>
+
+<pre><code>string s;
+cin &gt;&gt; s;
+auto cnt = 0;
+for (auto i=1; i&lt;s.size(); ++i)
+{
+    if (s[i]==s[i-1])
+        cnt++;
+}
+cout &lt;&lt; cnt;  
+</code></pre>
+
+<p>Let's explore the standard library and find other solutions.</p>
+
+<p>The for loop is doing something like:</p>
+
+<p><img src="https://sketch.io/render/sk-28edab033d736d1b8d76ef1edffcd393.jpeg" alt="enter image description here" title=""></p>
+
+<p>Now, we can visualize the algorithm from another point of view:</p>
+
+<p><img src="https://sketch.io/render/sk-826b4f74a78d5b5d1d306994281b7b05.jpeg" alt="enter image description here" title=""></p>
+
+<p>The second string is actually the first one shifted by one position. From this point of view we are turning the problem into: counting the number of equal pairs. We could use <code>count_if</code> if the standard had something like <em>adjacent_element_iterator</em>.</p>
+
+<p>Thinking more about the algorithm, we have two operations involved:</p>
+
+<ul>
+<li>comparing each pair</li>
+<li>summing the number of times the comparison is true</li>
+</ul>
+
+<p>Forget the problem for a moment and replace characters with numbers:</p>
+
+<pre><code>  1 2 3 4 5
+1 2 3 4 5
+</code></pre>
+
+<p>Instead of comparing, let's do a product:</p>
+
+<pre><code>res = 1*2 + 2*3 + 3*4 + 4*5
+</code></pre>
+
+<p>This is a <strong>scalar product</strong> (or dot product or, innter product). The STL has <code>std::inner_product</code> performing this operation. The STL is flexible and this algorithm allow us to customize “sum” e “product”. Instead of the mathemtical product we just need the comparison, which returns 1 or 0:</p>
+
+<pre><code>cin &gt;&gt; s;
+cout &lt;&lt; inner_product(begin(s), end(s)-1, next(begin(s)), 0, plus&lt;&gt;(), equal_to&lt;&gt;());
+</code></pre>
+
+In C++, <code>inner_product</code> can be used whatever a <strong>zip_with</strong> is needed. This idiom is unknown by many people.
+
+<p>The other solution comes from a simple idea: suppose we want to remove the adjacent equal characters.</p>
+
+<p>What's the point with <code>remove_if</code> and <code>remove</code>? Before we told that algorithms cannot mutate the internal storage of a container. E.g. in this case, how remove can physically remove elements from the string?</p>
+
+<p>They do not remove elements, they just overwrite elements to remove with the one sto maintain, such that at the end of the structure some contiguous holes will be left. Such holes will be physically erased by the container. </p>
+
+<p>For instance, suppose we remove elements bigger than 14 from this vector:</p>
+
+<p><img src="https://sketch.io/render/sk-64756742f0f5ccf6e859c8ec2e1e2254.jpeg" alt="enter image description here" title=""></p>
+
+<p><code>remove_if</code> just overwrites (technically move-assigns, if possible, or just assigns if not) elements to remove with good ones:</p>
+
+<p><img src="https://sketch.io/render/sk-9b6ba092ec11667ba5562ed73d945364.jpeg" alt="enter image description here" title=""></p>
+
+<p>The holes at the end will be erase by a vector member function - <code>erase</code> - because only the vector knows its internal details:</p>
+
+<pre><code>auto beginGarbage = remove_if(begin(v), end(v), [](int i) { return i&gt;14; });
+v.erase(beginGarbage, end(v));
+</code></pre>
+
+<p>Or, idiomatically:</p>
+
+<pre><code>v.erase(remove_if(begin(v), end(v), [](int i) { return i&gt;14; }), end(v));
+</code></pre>
+
+<p><code>vector::erase</code> ha un overload che dato un (proprio) range lo cancella (gli oggetti vengono deallocati).</p>
+
+<p><code>remove</code> and <code>remove_if</code> are not the only algorithm behaving this way. <code>unique</code> is similar. It “removes” the <strong>adjacent equal</strong> values from a range. It does exactly what we need:</p>
+
+<pre><code>cin &gt;&gt; s;
+cout &lt;&lt; distance(unique(begin(s), end(s)), end(s)) &lt;&lt; endl;
+</code></pre>
+
+<p><code>unique</code>, just like <code>remove_if</code>, returns an iterator to the “new logical end” of the range. Then, we just need to measure the distance from the new end to the current. This is exactly the number duplicated adjacent characters:</p>
+
+<p><img src="https://sketch.io/render/sk-e1b58382ef290060511f1c7f00c32973.jpeg" alt="enter image description here" title=""></p>
+
+<p>What does it happen if we use <code>unique</code> and then <code>erase</code> on a sorted sequence?</p>
+
+<p><em>Marco Arena, Ultima modifica: 29 Aprile 2017</em></p></div></body>
+</html>
