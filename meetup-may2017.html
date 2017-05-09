@@ -70,7 +70,7 @@ Reference: <a href="http://en.cppreference.com/w/cpp/container">http://en.cppref
 <li>Container adaptors</li>
 </ul>
 
-<p>Every container stores and manages objects of a certain type. Ad esempio:</p>
+<p>Every container stores and manages objects of a certain type. For example:</p>
 
 <pre><code>vector&lt;int&gt;
 </code></pre>
@@ -80,7 +80,7 @@ Reference: <a href="http://en.cppreference.com/w/cpp/container">http://en.cppref
 <pre><code>vector&lt;int&gt;::value_type
 </code></pre>
 
-<p><strong>Every container provies such </strong> <code>value_type</code> because the concept <a href="http://en.cppreference.com/w/cpp/concept/Container">Container</a> requires such type definition.</p>
+<p><strong>Every container provides a </strong> <code>value_type</code> because the concept <a href="http://en.cppreference.com/w/cpp/concept/Container">Container</a> requires such type definition.</p>
 
 <p>Examples:</p>
 
@@ -88,9 +88,9 @@ Reference: <a href="http://en.cppreference.com/w/cpp/container">http://en.cppref
 vector&lt;int&gt; v;
 </code></pre>
 
-<p>T, to be used as underlying type, <strong>has to implement some requirements</strong> (concepts) that can vary from container to container. Some depend also on the operations the user is going to perform with the container. For example, you can use a vector with moveable type that is not copyable as far as you don't try to copy the container.</p>
+<p>For T to be used as an underlying type <strong>is required to implement some concepts</strong> that can vary from container to container. Some depend also on the operations the user is going to perform with the container. For example, you can use a vector with moveable type that is not copyable as far as you don't try to copy the container.</p>
 
-<p>The basic requirement that a type has to implement to be used into any standard container is <a href="http://en.cppreference.com/w/cpp/concept/Erasable">Erasable</a>, that is the possibility to be erased through a certain allocator. By default (by using std::allocator) this means that the underlying type has a public destructor.</p>
+<p>The basic concept is <a href="http://en.cppreference.com/w/cpp/concept/Erasable">Erasable</a>, that is the possibility to be erased through a certain allocator. By default (by using std::allocator) this means that the underlying type has a public destructor.</p>
 
 <h3 id="example-1">An example: sum of a sequence</h3>
 
