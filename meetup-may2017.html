@@ -646,9 +646,9 @@ v.erase(beginGarbage, end(v));
 <pre><code>v.erase(remove_if(begin(v), end(v), [](int i) { return i&gt;14; }), end(v));
 </code></pre>
 
-<p><code>vector::erase</code> ha un overload che dato un (proprio) range lo cancella (gli oggetti vengono deallocati).</p>
+<p><code>vector::erase</code> provides an overload that physically erases a range of elements from the vector.</p>
 
-<p><code>remove</code> and <code>remove_if</code> are not the only algorithm behaving this way. <code>unique</code> is similar. It “removes” the <strong>adjacent equal</strong> values from a range. It does exactly what we need:</p>
+<p><code>remove</code> and <code>remove_if</code> are not the only algorithms behaving this way. <code>unique</code> is similar. It “removes” the <strong>adjacent equal</strong> values from a range. It does exactly what we need:</p>
 
 <pre><code>cin &gt;&gt; s;
 cout &lt;&lt; distance(unique(begin(s), end(s)), end(s)) &lt;&lt; endl;
@@ -660,5 +660,5 @@ cout &lt;&lt; distance(unique(begin(s), end(s)), end(s)) &lt;&lt; endl;
 
 <p>What does it happen if we use <code>unique</code> and then <code>erase</code> on a sorted sequence?</p>
 
-<p><em>Marco Arena, Ultima modifica: 29 Aprile 2017</em></p></div></body>
+<p><em>Marco Arena, Last Edit: 9 May 2017</em></p></div></body>
 </html>
