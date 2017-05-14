@@ -59,7 +59,7 @@ Reference: <a href="http://en.cppreference.com/w/cpp/container">http://en.cppref
 <pre><code>vector&lt;T&gt;
 </code></pre>
 
-<p>Is also a <em>ContiguousContainer</em> (fino al C++14 si arrivava fino a <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer">SequenceContainer</a>), <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer">ReversibleContainer</a> e <a href="http://en.cppreference.com/w/cpp/concept/AllocatorAwareContainer">AllocatorAwareContainer</a>.</p>
+<p>Is also a <em>ContiguousContainer</em> (until C++14 it was just a <a href="http://en.cppreference.com/w/cpp/concept/SequenceContainer">SequenceContainer</a>), <a href="http://en.cppreference.com/w/cpp/concept/ReversibleContainer">ReversibleContainer</a> e <a href="http://en.cppreference.com/w/cpp/concept/AllocatorAwareContainer">AllocatorAwareContainer</a>.</p>
 
 <p>In the STL, containers are categorized as:</p>
 
@@ -102,7 +102,7 @@ vector&lt;int&gt; v;
 {
     int sum = 0;
     for (auto i=0u; i&lt;v.size(); ++i)
-       sum += v[i]; // elemento in posizione i (0-based)
+       sum += v[i]; // i-th position (0-based)
     cout &lt;&lt; sum;
 }
 </code></pre>
